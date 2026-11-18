@@ -15,9 +15,6 @@
  * exists, its script failed, the page finished loading without it, or WAIT_TIMEOUT_MS passed.
  * One wait is kept per global, so every caller shares it and a callback passed twice runs once.
  * An SDK that arrives after the timeout still runs the callbacks once more.
- *
- * This file is registered before the SDK tags, so the capturing listeners below also see an SDK
- * script that fails before any caller asked to wait.
  */
 (function (root, factory) {
   var api = factory();
@@ -43,40 +40,52 @@
     var recordScript = function (event) {
       var target = event.target;
 
-      if (target && target.tagName === 'SCRIPT' && target.src && target.src.indexOf(SDK_HOST) !== -1) {
-        finishedScripts.push(target.src);
+      if (!target || target.tagName !== 'SCRIPT' || !target.src || target.src.indexOf(SDK_HOST) === -1) {
+        return;
       }
+      finishedScripts.push(target.src);
+
+      Object.keys(waits).forEach(function (globalName) {
+        if (target.src.indexOf(waits[globalName].scriptSrcPart) !== -1) {
+          waits[globalName].settle();
+        }
+      });
+    };
+    var stopRecording = function () {
+      root.removeEventListener('load', recordScript, true);
+      root.removeEventListener('error', recordScript, true);
+      root.removeEventListener('load', stopRecording);
     };
 
     root.addEventListener('load', recordScript, true);
     root.addEventListener('error', recordScript, true);
-
-    function sdkScripts(scriptSrcPart) {
-      var scripts = root.document.querySelectorAll('script[src*="' + scriptSrcPart + '"]');
-
-      return Array.prototype.slice.call(scripts);
-    }
+    root.addEventListener('load', stopRecording);
 
     function hasSettled(globalName, scriptSrcPart) {
       if (root[globalName] || timedOut[globalName] || root.document.readyState === 'complete') {
         return true;
       }
 
-      return sdkScripts(scriptSrcPart).some(function (script) {
+      var scripts = root.document.querySelectorAll('script[src*="' + scriptSrcPart + '"]');
+
+      return Array.prototype.some.call(scripts, function (script) {
         return finishedScripts.indexOf(script.src) !== -1;
       });
     }
 
     function startWait(globalName, scriptSrcPart) {
-      var entry = { callbacks: [], ranAfterTimeout: false };
+      var entry = { callbacks: [], scriptSrcPart: scriptSrcPart, ranAfterTimeout: false };
       var runCallbacks = function () {
         entry.callbacks.forEach(function (callback) {
           callback();
         });
       };
-      var settle = function () {
+      var timer;
+
+      entry.settle = function () {
         if (waits[globalName] === entry) {
           root.clearTimeout(timer);
+          root.removeEventListener('load', entry.settle);
           delete waits[globalName];
           runCallbacks();
 
@@ -88,20 +97,12 @@
           runCallbacks();
         }
       };
-      var timer = root.setTimeout(function () {
-        if (waits[globalName] !== entry) {
-          return;
-        }
+      timer = root.setTimeout(function () {
         timedOut[globalName] = true;
         delete waits[globalName];
         runCallbacks();
       }, WAIT_TIMEOUT_MS);
-
-      sdkScripts(scriptSrcPart).forEach(function (script) {
-        script.addEventListener('load', settle);
-        script.addEventListener('error', settle);
-      });
-      root.addEventListener('load', settle);
+      root.addEventListener('load', entry.settle);
 
       waits[globalName] = entry;
 
@@ -139,7 +140,6 @@
   }
 
   return {
-    create: create,
-    WAIT_TIMEOUT_MS: WAIT_TIMEOUT_MS
+    create: create
   };
 });

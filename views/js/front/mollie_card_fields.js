@@ -112,9 +112,7 @@ $(document).ready(function () {
         }
 
         if (!mollie && typeof window.Mollie !== 'function') {
-            if (window.MollieSdk) {
-                window.MollieSdk.wait('Mollie', 'js.mollie.com/v1/', initMollieCardFields);
-            }
+            waitForSdk(initMollieCardFields);
             return;
         }
 
@@ -136,23 +134,25 @@ $(document).ready(function () {
 
     var orderButtonSelector = '#payment-confirmation button[type=submit], #opc-pay-button';
 
+    function waitForSdk(callback) {
+        return !!window.MollieSdk && window.MollieSdk.wait('Mollie', 'js.mollie.com/v1/', callback);
+    }
+
     function isWaitingForSdk() {
         return !!window.MollieSdk && window.MollieSdk.isWaiting('Mollie');
     }
 
-    // The order button stays greyed while the SDK loads, so the shopper sees why the click did
-    // nothing and can place the order once the card fields are there.
     function holdOrderButtonUntilSdkSettles() {
         $(orderButtonSelector).prop('disabled', true).addClass('disabled');
-        window.MollieSdk.wait('Mollie', 'js.mollie.com/v1/', releaseOrderButton);
+        waitForSdk(releaseOrderButton);
     }
 
     function releaseOrderButton() {
         $(orderButtonSelector).prop('disabled', false).removeClass('disabled');
     }
 
-    // Until the async SDK has mounted the card fields there is no token to send, so the
-    // card form must not reach the server.
+    // Until the async SDK has mounted the card fields there is no token to send, so the card
+    // form must not reach the server. The greyed button shows the shopper why nothing happened.
     $(document).on('submit', 'form', function (event) {
         if (!isWaitingForSdk() || !$(this).find('input[name="mollieCardToken"]').length || $('input[name="mollie-use-saved-card"]').is(':checked')) {
             return;

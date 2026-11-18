@@ -16,6 +16,10 @@ class FakeTarget {
     this.listeners.push({ type, listener, capture });
   }
 
+  removeEventListener(type: string, listener: Listener, capture = false) {
+    this.listeners = this.listeners.filter((entry) => !(entry.type === type && entry.listener === listener && entry.capture === capture));
+  }
+
   fire(type: string) {
     this.dispatch(type, this, () => true);
   }
@@ -30,6 +34,7 @@ class FakeTarget {
   private dispatch(type: string, target: unknown, accepts: (capture: boolean) => boolean) {
     this.listeners
       .filter((entry) => entry.type === type && accepts(entry.capture))
+      .slice()
       .forEach((entry) => entry.listener({ target }));
   }
 }
@@ -66,9 +71,7 @@ function fakePage(readyState = 'interactive', srcs: string[] = [V1_SRC, V2_SRC])
     due.forEach((callback) => callback());
   };
   const finish = (type: 'load' | 'error', src: string) => {
-    const script = scripts.find((candidate) => candidate.src === src)!;
-    root.capture(type, script);
-    script.fire(type);
+    root.capture(type, scripts.find((candidate) => candidate.src === src));
   };
 
   return { root, sdk: sdkWait.create(root), finish, runTimers, timers };
