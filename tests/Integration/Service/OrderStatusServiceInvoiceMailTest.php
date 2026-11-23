@@ -18,6 +18,7 @@ use Mollie\Repository\OrderRepository;
 use Mollie\Service\MailService;
 use Mollie\Service\OrderStatusService;
 use Mollie\Tests\Integration\BaseTestCase;
+use Mollie\Tests\Integration\Factory\CarrierFactory;
 use Mollie\Tests\Integration\Factory\CartFactory;
 use Mollie\Tests\Integration\Factory\ProductFactory;
 
@@ -27,47 +28,57 @@ use Mollie\Tests\Integration\Factory\ProductFactory;
  */
 class OrderStatusServiceInvoiceMailTest extends BaseTestCase
 {
+    const CONFIG_KEYS = ['PS_INVOICE', Config::MOLLIE_SEND_ORDER_CONFIRMATION, 'PS_STOCK_MANAGEMENT'];
+
     /** @var array */
     private $configBackup = [];
+
+    /** @var array */
+    private $contextBackup = [];
 
     protected function setUp()
     {
         parent::setUp();
 
-        foreach (['PS_INVOICE', Config::MOLLIE_SEND_ORDER_CONFIRMATION, 'PS_STOCK_MANAGEMENT'] as $key) {
-            $this->configBackup[$key] = \Configuration::get($key);
+        foreach (self::CONFIG_KEYS as $key) {
+            $this->configBackup[$key] = \Configuration::hasKey($key) ? \Configuration::get($key) : null;
         }
 
         \Configuration::updateValue('PS_INVOICE', 1);
         \Configuration::updateValue(Config::MOLLIE_SEND_ORDER_CONFIRMATION, Config::NEW_ORDER_MAIL_SEND_ON_PAID);
         \Configuration::updateValue('PS_STOCK_MANAGEMENT', 1);
 
+        $context = \Context::getContext();
+        $this->contextBackup = [
+            'controller' => $context->controller ?? null,
+            'cart' => $context->cart ?? null,
+        ];
         $this->giveContextAFrontControllerContainer();
     }
 
     protected function tearDown()
     {
         foreach ($this->configBackup as $key => $value) {
+            if (null === $value) {
+                \Configuration::deleteByName($key);
+                continue;
+            }
+
             \Configuration::updateValue($key, $value);
         }
+
+        $context = \Context::getContext();
+        $context->controller = $this->contextBackup['controller'];
+        $context->cart = $this->contextBackup['cart'];
 
         parent::tearDown();
     }
 
     public function testConfirmationMailGetsTheOrderWithItsNewInvoice()
     {
-        $orderId = $this->createAwaitingOrder();
+        $orderId = $this->createAwaitingOrder([$this->createProduct()]);
 
-        $mailedOrders = [];
-        $mailService = $this->createMock(MailService::class);
-        $mailService->expects($this->once())
-            ->method('sendOrderConfMail')
-            ->willReturnCallback(function (\Order $order) use (&$mailedOrders) {
-                $mailedOrders[] = clone $order;
-            });
-
-        $orderStatusService = new OrderStatusService($mailService, $this->getService(OrderRepository::class));
-        $orderStatusService->setOrderStatus($orderId, PaymentStatus::STATUS_PAID);
+        $mailedOrders = $this->setPaidAndCaptureMailedOrders($orderId, 1);
 
         $storedInvoiceNumber = (int) (new \Order($orderId))->invoice_number;
 
@@ -77,6 +88,54 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
             (int) $mailedOrders[0]->invoice_number,
             'The confirmation mail must be built from the order that holds the new invoice.'
         );
+    }
+
+    public function testEachSplitOrderConfirmationMailGetsItsOwnInvoice()
+    {
+        $firstProduct = $this->createProduct();
+        $secondProduct = $this->createProduct();
+        $this->restrictProductToNewCarrier($firstProduct);
+        $this->restrictProductToNewCarrier($secondProduct);
+
+        $orderId = $this->createAwaitingOrder([$firstProduct, $secondProduct]);
+        $cartOrders = \Order::getByReference((new \Order($orderId))->reference);
+        $this->assertCount(2, $cartOrders, 'The cart should be split into two orders.');
+
+        $mailedOrders = $this->setPaidAndCaptureMailedOrders($orderId, 2);
+
+        $mailedInvoiceNumbers = [];
+        foreach ($mailedOrders as $mailedOrder) {
+            $storedInvoiceNumber = (int) (new \Order((int) $mailedOrder->id))->invoice_number;
+
+            $this->assertGreaterThan(0, $storedInvoiceNumber, 'Every split order should get an invoice.');
+            $this->assertSame(
+                $storedInvoiceNumber,
+                (int) $mailedOrder->invoice_number,
+                'Each split order mail must be built from the order that holds its new invoice.'
+            );
+            $mailedInvoiceNumbers[] = $storedInvoiceNumber;
+        }
+
+        $this->assertCount(2, array_unique($mailedInvoiceNumbers), 'Each split order must carry its own invoice.');
+    }
+
+    /**
+     * @return \Order[] copies of the orders as they were handed to the confirmation mail
+     */
+    private function setPaidAndCaptureMailedOrders(int $orderId, int $expectedMails): array
+    {
+        $mailedOrders = [];
+        $mailService = $this->createMock(MailService::class);
+        $mailService->expects($this->exactly($expectedMails))
+            ->method('sendOrderConfMail')
+            ->willReturnCallback(function (\Order $order) use (&$mailedOrders) {
+                $mailedOrders[] = clone $order;
+            });
+
+        $orderStatusService = new OrderStatusService($mailService, $this->getService(OrderRepository::class));
+        $orderStatusService->setOrderStatus($orderId, PaymentStatus::STATUS_PAID);
+
+        return $mailedOrders;
     }
 
     /**
@@ -100,15 +159,41 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
         $context->controller = $controller;
     }
 
-    private function createAwaitingOrder(): int
+    private function createProduct(): \Product
     {
         /** @var \Product $product */
         $product = ProductFactory::initialize()->create();
         \StockAvailable::setQuantity((int) $product->id, 0, 10);
 
+        return $product;
+    }
+
+    /**
+     * PrestaShop splits a cart into one order per package; products that share no carrier end up in different packages.
+     */
+    private function restrictProductToNewCarrier(\Product $product)
+    {
+        $carrier = CarrierFactory::create();
+
+        $product->setCarriers([(int) $carrier->id]);
+    }
+
+    /**
+     * @param \Product[] $products
+     */
+    private function createAwaitingOrder(array $products): int
+    {
         /** @var \Cart $cart */
         $cart = CartFactory::initialize()->create();
-        $cart->updateQty(1, (int) $product->id, $product->getDefaultIdProductAttribute());
+        foreach ($products as $product) {
+            $cart->updateQty(1, (int) $product->id, $product->getDefaultIdProductAttribute());
+        }
+
+        $deliveryOptions = $cart->getDeliveryOptionList();
+        $addressId = (int) $cart->id_address_delivery;
+        if (!empty($deliveryOptions[$addressId])) {
+            $cart->setDeliveryOption([$addressId => (string) key($deliveryOptions[$addressId])]);
+        }
         $cart->update();
 
         \Context::getContext()->cart = $cart;

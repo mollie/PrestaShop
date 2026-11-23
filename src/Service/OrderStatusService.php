@@ -115,6 +115,8 @@ class OrderStatusService
         $orders = $this->orderRepository->findAllByCartId($order->id_cart);
         if (count($orders) > 1) {
             foreach ($orders as $subOrder) {
+                // Reload so core does not save values that an earlier sub-order's status change already replaced
+                $subOrder = new Order((int) $subOrder->id);
                 $history = new OrderHistory();
                 $history->id_order = $subOrder->id;
                 $history->changeIdOrderState($statusId, $subOrder, $useExistingPayment);
