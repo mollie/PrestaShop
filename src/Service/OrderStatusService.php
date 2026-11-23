@@ -117,7 +117,7 @@ class OrderStatusService
             foreach ($orders as $subOrder) {
                 $history = new OrderHistory();
                 $history->id_order = $subOrder->id;
-                $history->changeIdOrderState($statusId, $subOrder->id, $useExistingPayment);
+                $history->changeIdOrderState($statusId, $subOrder, $useExistingPayment);
 
                 $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 
@@ -134,7 +134,7 @@ class OrderStatusService
         } else {
             $history = new OrderHistory();
             $history->id_order = $order->id;
-            $history->changeIdOrderState($statusId, $orderId, $useExistingPayment);
+            $history->changeIdOrderState($statusId, $order, $useExistingPayment);
 
             $status = OrderStatusUtility::transformPaymentStatusToPaid($status, Config::STATUS_PAID_ON_BACKORDER);
 
