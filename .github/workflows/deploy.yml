@@ -10,15 +10,14 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
+            # IF YOU EDIT THESE TWO STEPS, DON'T FORGET TO EDIT release.yml
             - name: Install Composer dependencies
               env:
                 COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
               run: |
                   composer install --no-dev --optimize-autoloader --classmap-authoritative
                   composer dump-autoload --no-dev --optimize --classmap-authoritative
-
             - name: build
-                # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
               run: |
                   npm install --quiet --no-progress
                   rm -rf node_modules

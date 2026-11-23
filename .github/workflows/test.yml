@@ -124,7 +124,8 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - env:
+      - name: Update composer dependencies
+        env:
           COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer update
 
