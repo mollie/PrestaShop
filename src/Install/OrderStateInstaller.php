@@ -130,57 +130,46 @@ class OrderStateInstaller implements InstallerInterface
     }
 
     /**
+     * Each shop keeps its own mapped state. Only shops without one get the new Mollie state.
+     *
      * @throws CouldNotInstallModule
      */
     private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData): void
     {
-        $shopIds = $this->getShopIdsUsingState($orderStatus);
+        $shopIdsWithoutState = [];
 
-        if (empty($shopIds)) {
-            return;
+        foreach (\Shop::getShops() as $shop) {
+            $shopId = (int) $shop['id_shop'];
+
+            if ($this->orderStatusMapping->isSkipped($orderStatus, $shopId)) {
+                continue;
+            }
+
+            $orderState = new OrderState((int) $this->configurationAdapter->getStored($orderStatus, $shopId));
+
+            if (!\Validate::isLoadedObject($orderState)) {
+                $shopIdsWithoutState[] = $shopId;
+
+                continue;
+            }
+
+            $this->restoreIfDeleted($orderState);
         }
 
-        $orderState = new OrderState((int) $this->configurationAdapter->getStored($orderStatus, $shopIds[0]));
-
-        if (\Validate::isLoadedObject($orderState)) {
-            $this->enableState($orderStatus, $orderState, $shopIds);
-
+        if (empty($shopIdsWithoutState)) {
             return;
         }
 
         $orderState = $this->createOrderState($orderStateInstallerData);
 
-        $this->updateStateConfiguration($orderStatus, $orderState, $shopIds);
-    }
-
-    /**
-     * Shops that need this order state, leaving out the ones where the merchant chose "Skip this status".
-     *
-     * @return int[]
-     */
-    private function getShopIdsUsingState(string $key): array
-    {
-        $shopIds = [];
-
-        foreach (\Shop::getShops() as $shop) {
-            if ($this->orderStatusMapping->isSkipped($key, (int) $shop['id_shop'])) {
-                continue;
-            }
-
-            $shopIds[] = (int) $shop['id_shop'];
+        foreach ($shopIdsWithoutState as $shopId) {
+            $this->configurationAdapter->updateValue($orderStatus, (int) $orderState->id, $shopId);
         }
-
-        return $shopIds;
     }
 
-    /**
-     * @param int[] $shopIds
-     */
-    private function enableState(string $key, OrderState $orderState, array $shopIds): void
+    private function restoreIfDeleted(OrderState $orderState): void
     {
-        $this->updateStateConfiguration($key, $orderState, $shopIds);
-
-        if ((bool) !$orderState->deleted) {
+        if (!$orderState->deleted) {
             return;
         }
 
@@ -223,15 +212,5 @@ class OrderStateInstaller implements InstallerInterface
         $this->orderStateImageService->createOrderStateLogo($orderState->id);
 
         return $orderState;
-    }
-
-    /**
-     * @param int[] $shopIds
-     */
-    private function updateStateConfiguration(string $key, OrderState $orderState, array $shopIds): void
-    {
-        foreach ($shopIds as $shopId) {
-            $this->configurationAdapter->updateValue($key, (int) $orderState->id, $shopId);
-        }
     }
 }

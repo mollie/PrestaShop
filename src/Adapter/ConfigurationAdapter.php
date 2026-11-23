@@ -59,12 +59,9 @@ class ConfigurationAdapter
     public function getStored($key, ?int $idShop = null)
     {
         $key = $this->parseKeyByEnvironment($key);
+        $idShopGroup = $idShop ? (int) \Shop::getGroupFromShop($idShop) : $this->context->getShopGroupId();
 
-        if (!$idShop) {
-            return \Configuration::get($key, null, $this->context->getShopGroupId(), $this->context->getShopId());
-        }
-
-        return \Configuration::get($key, null, (int) \Shop::getGroupFromShop($idShop), $idShop);
+        return \Configuration::get($key, null, $idShopGroup, $idShop ?: $this->context->getShopId());
     }
 
     /**
