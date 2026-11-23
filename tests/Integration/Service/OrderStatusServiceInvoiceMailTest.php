@@ -103,7 +103,8 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
 
         $mailedOrders = $this->setPaidAndCaptureMailedOrders($orderId, 2);
 
-        $mailedInvoiceNumbers = [];
+        $this->assertCount(2, array_unique(array_column($mailedOrders, 'id')), 'Each split order must get its own mail.');
+
         foreach ($mailedOrders as $mailedOrder) {
             $storedInvoiceNumber = (int) (new \Order((int) $mailedOrder->id))->invoice_number;
 
@@ -113,10 +114,7 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
                 (int) $mailedOrder->invoice_number,
                 'Each split order mail must be built from the order that holds its new invoice.'
             );
-            $mailedInvoiceNumbers[] = $storedInvoiceNumber;
         }
-
-        $this->assertCount(2, array_unique($mailedInvoiceNumbers), 'Each split order must carry its own invoice.');
     }
 
     /**
@@ -163,7 +161,6 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
     {
         /** @var \Product $product */
         $product = ProductFactory::initialize()->create();
-        \StockAvailable::setQuantity((int) $product->id, 0, 10);
 
         return $product;
     }
@@ -195,8 +192,6 @@ class OrderStatusServiceInvoiceMailTest extends BaseTestCase
             $cart->setDeliveryOption([$addressId => (string) key($deliveryOptions[$addressId])]);
         }
         $cart->update();
-
-        \Context::getContext()->cart = $cart;
 
         /** @var \Mollie $module */
         $module = \Module::getInstanceByName('mollie');
