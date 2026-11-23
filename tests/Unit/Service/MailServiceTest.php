@@ -21,6 +21,19 @@ use Mollie\Tests\Unit\BaseTestCase;
 
 class MailServiceTest extends BaseTestCase
 {
+    /** @var string|false|null */
+    private $mailType;
+
+    protected function tearDown(): void
+    {
+        if (null !== $this->mailType) {
+            \Configuration::set('PS_MAIL_TYPE', $this->mailType);
+            $this->mailType = null;
+        }
+
+        parent::tearDown();
+    }
+
     /**
      * @dataProvider cartRuleListProvider
      */
@@ -113,7 +126,7 @@ class MailServiceTest extends BaseTestCase
         ]);
 
         foreach (['{products}', '{products_txt}'] as $partial) {
-            $this->assertStringContainsString('NEILL-01', $data[$partial]);
+            $this->assertSame(1, preg_match('/O(\'|&#0?39;|&apos;)NEILL-01/', $data[$partial]));
             $this->assertStringNotContainsString('\\', $data[$partial]);
             $this->assertSame(0, preg_match('/TSHIRT/', $data[$partial]));
         }
@@ -121,6 +134,7 @@ class MailServiceTest extends BaseTestCase
 
     private function orderConfData(array $orderLines)
     {
+        $this->mailType = \Configuration::get('PS_MAIL_TYPE');
         \Configuration::set('PS_MAIL_TYPE', \Mail::TYPE_BOTH);
 
         $order = $this->mock(\Order::class);
