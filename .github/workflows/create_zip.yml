@@ -28,6 +28,8 @@ jobs:
             make create-env env=${{ inputs.environment }}
 
       - name: Build module ZIP
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative

@@ -12,6 +12,8 @@ jobs:
               uses: actions/checkout@v4
             - name: build
                 # IF YOU EDIT THIS, DON'T FORGET TO EDIT release.yml
+              env:
+                COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
               run: |
                   composer install --no-dev --optimize-autoloader --classmap-authoritative
                   composer dump-autoload --no-dev --optimize --classmap-authoritative

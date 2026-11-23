@@ -23,6 +23,8 @@ jobs:
           node-version: 'latest'
 
       - name: Build module
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           # Install Composer dependencies for production
           composer install --no-dev --optimize-autoloader --classmap-authoritative
