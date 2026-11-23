@@ -49,19 +49,22 @@ class ConfigurationAdapter
     }
 
     /**
-     * Unlike get(), tells a stored "0" apart from a key that was never saved.
+     * The value as stored, or false when the key was never saved. Unlike get(), a stored "0" or ""
+     * comes back as is, and a given shop is read within its own shop group.
      *
      * @param string|array{production: string, sandbox: string} $key
+     *
+     * @return string|int|false
      */
-    public function has($key, $idShop = null): bool
+    public function getStored($key, ?int $idShop = null)
     {
         $key = $this->parseKeyByEnvironment($key);
 
         if (!$idShop) {
-            $idShop = $this->context->getShopId();
+            return \Configuration::get($key, null, $this->context->getShopGroupId(), $this->context->getShopId());
         }
 
-        return \Configuration::get($key, null, $this->context->getShopGroupId(), $idShop) !== false;
+        return \Configuration::get($key, null, (int) \Shop::getGroupFromShop($idShop), $idShop);
     }
 
     /**

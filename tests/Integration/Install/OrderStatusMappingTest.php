@@ -27,6 +27,7 @@ class OrderStatusMappingTest extends BaseTestCase
         Config::MOLLIE_STATUS_CHARGEBACK,
         Config::MOLLIE_STATUS_AWAITING,
         Config::MOLLIE_STATUS_PARTIALLY_SHIPPED,
+        Config::MOLLIE_STATUS_COMPLETED,
     ];
 
     /** @var array<string, string|false> */
@@ -58,7 +59,7 @@ class OrderStatusMappingTest extends BaseTestCase
                 continue;
             }
 
-            \Configuration::updateValue($key, $value);
+            $this->configuration->updateValue($key, $value);
         }
 
         $createdStates = new \PrestaShopCollection(\OrderState::class);
@@ -69,6 +70,27 @@ class OrderStatusMappingTest extends BaseTestCase
         }
 
         parent::tearDown();
+    }
+
+    public function testItIsNotSetWhenOrderStateIsDeleted()
+    {
+        $orderState = new \OrderState();
+        $orderState->name = [(int) \Configuration::get('PS_LANG_DEFAULT') => 'Deleted custom state'];
+        $orderState->color = '#000000';
+        $orderState->add();
+        $orderState->deleted = true;
+        $orderState->update();
+        $this->configuration->updateValue(Config::MOLLIE_STATUS_REFUNDED, (int) $orderState->id);
+
+        $this->assertFalse($this->mapping()->isSet(Config::MOLLIE_STATUS_REFUNDED));
+    }
+
+    public function testEmptyValueIsNotASkip()
+    {
+        $this->configuration->updateValue(Config::MOLLIE_STATUS_COMPLETED, '');
+
+        $this->assertFalse($this->mapping()->isSkipped(Config::MOLLIE_STATUS_COMPLETED));
+        $this->assertFalse($this->mapping()->isSet(Config::MOLLIE_STATUS_COMPLETED));
     }
 
     public function testItIsNotSetWhenKeyIsMissing()

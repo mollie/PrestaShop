@@ -134,36 +134,51 @@ class OrderStateInstaller implements InstallerInterface
      */
     private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData): void
     {
-        if ($this->orderStatusMapping->isSkipped($orderStatus)) {
+        $shopIds = $this->getShopIdsUsingState($orderStatus);
+
+        if (empty($shopIds)) {
             return;
         }
 
-        if ($this->validateIfStatusExists($orderStatus)) {
-            $this->enableState($orderStatus);
+        $orderState = new OrderState((int) $this->configurationAdapter->getStored($orderStatus, $shopIds[0]));
+
+        if (\Validate::isLoadedObject($orderState)) {
+            $this->enableState($orderStatus, $orderState, $shopIds);
 
             return;
         }
 
         $orderState = $this->createOrderState($orderStateInstallerData);
 
-        $this->updateStateConfiguration($orderStatus, $orderState);
+        $this->updateStateConfiguration($orderStatus, $orderState, $shopIds);
     }
 
-    private function validateIfStatusExists(string $key): bool
+    /**
+     * Shops that need this order state, leaving out the ones where the merchant chose "Skip this status".
+     *
+     * @return int[]
+     */
+    private function getShopIdsUsingState(string $key): array
     {
-        $existingStateId = (int) $this->configurationAdapter->get($key);
-        $orderState = new OrderState($existingStateId);
+        $shopIds = [];
 
-        // if state already existed we won't install new one.
-        return \Validate::isLoadedObject($orderState);
+        foreach (\Shop::getShops() as $shop) {
+            if ($this->orderStatusMapping->isSkipped($key, (int) $shop['id_shop'])) {
+                continue;
+            }
+
+            $shopIds[] = (int) $shop['id_shop'];
+        }
+
+        return $shopIds;
     }
 
-    private function enableState(string $key): void
+    /**
+     * @param int[] $shopIds
+     */
+    private function enableState(string $key, OrderState $orderState, array $shopIds): void
     {
-        $existingStateId = (int) $this->configurationAdapter->get($key);
-        $orderState = new OrderState($existingStateId);
-
-        $this->updateStateConfiguration($key, $orderState);
+        $this->updateStateConfiguration($key, $orderState, $shopIds);
 
         if ((bool) !$orderState->deleted) {
             return;
@@ -210,15 +225,13 @@ class OrderStateInstaller implements InstallerInterface
         return $orderState;
     }
 
-    private function updateStateConfiguration(string $key, OrderState $orderState): void
+    /**
+     * @param int[] $shopIds
+     */
+    private function updateStateConfiguration(string $key, OrderState $orderState, array $shopIds): void
     {
-        $shops = \Shop::getShops();
-        foreach ($shops as $shop) {
-            if ($this->orderStatusMapping->isSkipped($key, (int) $shop['id_shop'])) {
-                continue;
-            }
-
-            $this->configurationAdapter->updateValue($key, (int) $orderState->id, (int) $shop['id_shop']);
+        foreach ($shopIds as $shopId) {
+            $this->configurationAdapter->updateValue($key, (int) $orderState->id, $shopId);
         }
     }
 }

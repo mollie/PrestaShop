@@ -62,18 +62,26 @@ class OrderStatusMapping
             return true;
         }
 
-        $stateId = $this->configurationAdapter->getAsInteger($key, $shopId);
+        $stateId = (int) $this->configurationAdapter->getStored($key, $shopId);
 
-        return $stateId > 0 && Validate::isLoadedObject(new OrderState($stateId));
+        if ($stateId <= 0) {
+            return false;
+        }
+
+        $orderState = new OrderState($stateId);
+
+        return Validate::isLoadedObject($orderState) && !$orderState->deleted;
     }
 
+    /**
+     * Only an explicit 0 is a skip. An empty value, which old installs could write, is not.
+     */
     public function isSkipped(string $key, ?int $shopId = null): bool
     {
         if (!in_array($key, Config::ORDER_STATUSES_WITH_SKIP, true)) {
             return false;
         }
 
-        return $this->configurationAdapter->has($key, $shopId)
-            && $this->configurationAdapter->getAsInteger($key, $shopId) === 0;
+        return (string) $this->configurationAdapter->getStored($key, $shopId) === '0';
     }
 }
