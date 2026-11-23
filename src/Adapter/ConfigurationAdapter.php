@@ -49,6 +49,22 @@ class ConfigurationAdapter
     }
 
     /**
+     * Unlike get(), tells a stored "0" apart from a key that was never saved.
+     *
+     * @param string|array{production: string, sandbox: string} $key
+     */
+    public function has($key, $idShop = null): bool
+    {
+        $key = $this->parseKeyByEnvironment($key);
+
+        if (!$idShop) {
+            $idShop = $this->context->getShopId();
+        }
+
+        return \Configuration::get($key, null, $this->context->getShopGroupId(), $idShop) !== false;
+    }
+
+    /**
      * @param string|array{production: string, sandbox: string} $key
      */
     public function updateValue($key, $value, $idShop = null, $html = false, $idShopGroup = null): void

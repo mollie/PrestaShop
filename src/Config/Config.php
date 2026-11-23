@@ -555,6 +555,18 @@ class Config
         return false;
     }
 
+    // Status mappings a merchant may set to "Skip this status" (0). Orders are created in
+    // Awaiting, Open, Authorized and Paid, so those always need a real order status.
+    const ORDER_STATUSES_WITH_SKIP = [
+        self::MOLLIE_STATUS_COMPLETED,
+        self::MOLLIE_STATUS_CANCELED,
+        self::MOLLIE_STATUS_EXPIRED,
+        self::MOLLIE_STATUS_REFUNDED,
+        self::MOLLIE_STATUS_PARTIAL_REFUND,
+        self::MOLLIE_STATUS_SHIPPING,
+        self::MOLLIE_STATUS_CHARGEBACK,
+    ];
+
     public static function getMollieOrderStatuses()
     {
         return [

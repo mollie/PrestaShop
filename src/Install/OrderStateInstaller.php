@@ -33,15 +33,19 @@ class OrderStateInstaller implements InstallerInterface
     private $configurationAdapter;
     /** @var OrderStateImageService */
     private $orderStateImageService;
+    /** @var OrderStatusMapping */
+    private $orderStatusMapping;
 
     public function __construct(
         ModuleFactory $moduleFactory,
         ConfigurationAdapter $configurationAdapter,
-        OrderStateImageService $orderStateImageService
+        OrderStateImageService $orderStateImageService,
+        OrderStatusMapping $orderStatusMapping
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderStateImageService = $orderStateImageService;
+        $this->orderStatusMapping = $orderStatusMapping;
     }
 
     /**
@@ -130,6 +134,10 @@ class OrderStateInstaller implements InstallerInterface
      */
     private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData): void
     {
+        if ($this->orderStatusMapping->isSkipped($orderStatus)) {
+            return;
+        }
+
         if ($this->validateIfStatusExists($orderStatus)) {
             $this->enableState($orderStatus);
 
@@ -206,6 +214,10 @@ class OrderStateInstaller implements InstallerInterface
     {
         $shops = \Shop::getShops();
         foreach ($shops as $shop) {
+            if ($this->orderStatusMapping->isSkipped($key, (int) $shop['id_shop'])) {
+                continue;
+            }
+
             $this->configurationAdapter->updateValue($key, (int) $orderState->id, (int) $shop['id_shop']);
         }
     }
