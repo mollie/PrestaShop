@@ -45,8 +45,6 @@ class OrderStateInstaller implements InstallerInterface
     }
 
     /**
-     * Install and reset put Mollie's order states back on every mapping they own.
-     *
      * @throws CouldNotInstallModule
      */
     public function install(): bool
@@ -55,7 +53,7 @@ class OrderStateInstaller implements InstallerInterface
     }
 
     /**
-     * Upgrades keep a merchant's "Skip this status" choice instead.
+     * Unlike install (and a reset), keeps a merchant's "Skip this status" choice.
      *
      * @throws CouldNotInstallModule
      */
@@ -153,16 +151,13 @@ class OrderStateInstaller implements InstallerInterface
     }
 
     /**
-     * Each shop keeps its own mapped state. Shops without one get Mollie's state, reused when it
-     * already exists, so a reset no longer adds a duplicate every time.
-     *
      * @throws CouldNotInstallModule
      */
     private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData, bool $keepSkipped): void
     {
         $shopIdsWithoutState = [];
 
-        foreach (\Shop::getShops() as $shop) {
+        foreach (\Shop::getShops(false) as $shop) {
             $shopId = (int) $shop['id_shop'];
 
             if ($keepSkipped && $this->isSkipped($orderStatus, $shopId)) {
@@ -171,7 +166,7 @@ class OrderStateInstaller implements InstallerInterface
 
             $orderState = new OrderState((int) $this->configurationAdapter->getStored($orderStatus, $shopId));
 
-            if (!\Validate::isLoadedObject($orderState)) {
+            if (!\Validate::isLoadedObject($orderState) || ($orderState->deleted && !$this->isModuleOrderState($orderState))) {
                 $shopIdsWithoutState[] = $shopId;
 
                 continue;
@@ -184,7 +179,7 @@ class OrderStateInstaller implements InstallerInterface
             return;
         }
 
-        $orderState = $this->findModuleOrderState($orderStateInstallerData->getName());
+        $orderState = $this->findModuleOrderState($orderStateInstallerData);
 
         if (!$orderState) {
             $orderState = $this->createOrderState($orderStateInstallerData);
@@ -196,7 +191,7 @@ class OrderStateInstaller implements InstallerInterface
     }
 
     /**
-     * Only an explicit 0 on a status that allows skip. An empty value from an old install is not a skip.
+     * An empty value written by old installs is not a skip, only an explicit 0 is.
      */
     private function isSkipped(string $key, int $shopId): bool
     {
@@ -204,15 +199,24 @@ class OrderStateInstaller implements InstallerInterface
             && (string) $this->configurationAdapter->getStored($key, $shopId) === '0';
     }
 
-    private function findModuleOrderState(string $name): ?OrderState
+    /**
+     * Matched on module, colour and flags rather than the name, which merchants translate or rename.
+     * Colour and flags differ for every state the module installs.
+     */
+    private function findModuleOrderState(OrderStateData $orderStateData): ?OrderState
     {
         $query = (new \DbQuery())
-            ->select('os.id_order_state')
-            ->from('order_state', 'os')
-            ->innerJoin('order_state_lang', 'osl', 'osl.id_order_state = os.id_order_state')
-            ->where('os.module_name = "' . pSQL($this->moduleFactory->getModuleName()) . '"')
-            ->where('osl.name = "' . pSQL($name) . '"')
-            ->orderBy('os.deleted ASC, os.id_order_state ASC');
+            ->select('id_order_state')
+            ->from('order_state')
+            ->where('module_name = "' . pSQL($this->moduleFactory->getModuleName()) . '"')
+            ->where('UPPER(color) = "' . pSQL(\Tools::strtoupper($orderStateData->getColor())) . '"')
+            ->where('send_email = ' . (int) $orderStateData->isSendEmail())
+            ->where('logable = ' . (int) $orderStateData->isLogable())
+            ->where('invoice = ' . (int) $orderStateData->isInvoice())
+            ->where('delivery = ' . (int) $orderStateData->isDelivery())
+            ->where('shipped = ' . (int) $orderStateData->isShipped())
+            ->where('paid = ' . (int) $orderStateData->isPaid())
+            ->orderBy('deleted ASC, id_order_state ASC');
 
         $orderStateId = (int) \Db::getInstance()->getValue($query);
 
@@ -224,6 +228,11 @@ class OrderStateInstaller implements InstallerInterface
         $this->restoreIfDeleted($orderState);
 
         return $orderState;
+    }
+
+    private function isModuleOrderState(OrderState $orderState): bool
+    {
+        return $orderState->module_name === $this->moduleFactory->getModuleName();
     }
 
     private function restoreIfDeleted(OrderState $orderState): void
