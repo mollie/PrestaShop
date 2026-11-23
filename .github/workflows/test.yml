@@ -22,6 +22,8 @@ jobs:
           key: php-composer-cache
 
       - name: Install composer
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer i
 
       # php-cs-fixer 2.19 refuses to run above PHP 8.0, and the runner ships a
@@ -63,6 +65,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install composer
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer i
 
       - name: Cache composer folder
@@ -90,6 +94,8 @@ jobs:
           key: php-composer-cache
 
       - name: Install production dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer install --no-dev
 
       - name: Lint shipped code on PHP 8.5
@@ -118,7 +124,10 @@ jobs:
           path: ~/.composer/cache
           key: php-composer-cache
 
-      - run: composer update
+      - name: Update composer dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
+        run: composer update
 
       - name: Pull PrestaShop files (Tag ${{ matrix.presta-versions }})
         run: docker run -tid --rm -v ps-volume:/var/www/html --name temp-ps prestashop/prestashop:${{ matrix.presta-versions }}
@@ -140,6 +149,8 @@ jobs:
           fetch-depth: 0
 
       - name: Build module ZIP
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative

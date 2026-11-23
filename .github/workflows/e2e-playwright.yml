@@ -39,6 +39,8 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install composer deps
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer i
       - name: Install npm deps
         run: npm ci
@@ -144,6 +146,8 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install composer deps
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: composer i
       - name: Install npm deps
         run: npm ci

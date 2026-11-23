@@ -22,12 +22,15 @@ jobs:
         with:
           node-version: 'latest'
 
-      - name: Build module
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
-          # Install Composer dependencies for production
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
 
+      - name: Build module
+        run: |
           # Build React components
           cd views/js/admin/library
           npm install

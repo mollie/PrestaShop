@@ -27,10 +27,15 @@ jobs:
         run: |
             make create-env env=${{ inputs.environment }}
 
-      - name: Build module ZIP
+      - name: Install Composer dependencies
+        env:
+          COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.GITHUB_TOKEN }}"}}'
         run: |
           composer install --no-dev --optimize-autoloader --classmap-authoritative
           composer dump-autoload --no-dev --optimize --classmap-authoritative
+
+      - name: Build module ZIP
+        run: |
           cd views/js/admin/library && npm install && npm run build
           rm -rf node_modules src
           cd ../../../..
