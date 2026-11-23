@@ -89,4 +89,78 @@ class MailServiceTest extends BaseTestCase
             ],
         ];
     }
+
+    public function testProductListShowsTheReferenceSavedOnTheOrderLine()
+    {
+        $data = $this->orderConfData([
+            $this->orderLine(1, 'TSHIRT', 'TSHIRT-RED-M'),
+            $this->orderLine(2, 'TSHIRT', 'TSHIRT-BLUE-L'),
+        ]);
+
+        foreach (['{products}', '{products_txt}'] as $partial) {
+            $this->assertStringContainsString('TSHIRT-RED-M', $data[$partial]);
+            $this->assertStringContainsString('TSHIRT-BLUE-L', $data[$partial]);
+            $this->assertSame(0, preg_match('/TSHIRT(?!-)/', $data[$partial]));
+        }
+    }
+
+    public function testProductListUnescapesTheSavedReference()
+    {
+        // OrderDetail::create() escapes the reference twice, so a quote is saved with a backslash
+        $data = $this->orderConfData([
+            $this->orderLine(1, 'TSHIRT', "O\\'NEILL-01"),
+            $this->orderLine(2, 'TSHIRT', null),
+        ]);
+
+        foreach (['{products}', '{products_txt}'] as $partial) {
+            $this->assertStringContainsString('NEILL-01', $data[$partial]);
+            $this->assertStringNotContainsString('\\', $data[$partial]);
+            $this->assertSame(0, preg_match('/TSHIRT/', $data[$partial]));
+        }
+    }
+
+    private function orderConfData(array $orderLines)
+    {
+        \Configuration::set('PS_MAIL_TYPE', \Mail::TYPE_BOTH);
+
+        $order = $this->mock(\Order::class);
+        $order->id_cart = 1;
+        $order->method('getProducts')->willReturn($orderLines);
+        $order->method('getCustomer')->willReturn(new \Customer());
+        $order->method('getCartRules')->willReturn([]);
+
+        $tools = $this->mock(ToolsAdapter::class);
+        $tools->method('displayPrice')->willReturn('€10.00');
+
+        $moduleFactory = $this->mock(ModuleFactory::class);
+        $moduleFactory->method('getModule')->willReturn($this->mock(\Mollie::class));
+
+        $mailService = new MailService(
+            $moduleFactory,
+            $this->mock(ProductAttributeAdapter::class),
+            $this->mock(GeneralSubscriptionMailDataProvider::class),
+            $tools
+        );
+
+        $method = new \ReflectionMethod(MailService::class, 'getOrderConfData');
+        $method->setAccessible(true);
+
+        return $method->invoke($mailService, $order);
+    }
+
+    private function orderLine($productAttributeId, $catalogReference, $orderedReference)
+    {
+        return [
+            'id_product' => 1,
+            'product_attribute_id' => $productAttributeId,
+            'id_customization' => 0,
+            'reference' => $catalogReference,
+            'product_reference' => $orderedReference,
+            'product_name' => 'T-shirt',
+            'product_quantity' => 1,
+            'price' => 10,
+            'unity' => '',
+            'is_virtual' => 0,
+        ];
+    }
 }

@@ -224,7 +224,7 @@ class MailService
 
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
-                'reference' => $product['reference'],
+                'reference' => stripslashes((string) $product['product_reference']),
                 'name' => $product['product_name'],
                 'price' => $this->tools->displayPrice($product_price * $product['product_quantity'], $this->context->currency),
                 'quantity' => $product['product_quantity'],
