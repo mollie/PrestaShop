@@ -21,19 +21,6 @@ use Mollie\Tests\Unit\BaseTestCase;
 
 class MailServiceTest extends BaseTestCase
 {
-    /** @var string|false|null */
-    private $mailType;
-
-    protected function tearDown(): void
-    {
-        if (null !== $this->mailType) {
-            \Configuration::set('PS_MAIL_TYPE', $this->mailType);
-            $this->mailType = null;
-        }
-
-        parent::tearDown();
-    }
-
     /**
      * @dataProvider cartRuleListProvider
      */
@@ -106,14 +93,14 @@ class MailServiceTest extends BaseTestCase
     public function testProductListShowsTheReferenceSavedOnTheOrderLine()
     {
         $data = $this->orderConfData([
-            $this->orderLine(1, 'TSHIRT', 'TSHIRT-RED-M'),
-            $this->orderLine(2, 'TSHIRT', 'TSHIRT-BLUE-L'),
+            $this->orderLine(1, 'TSHIRT-S-WHITE'),
+            $this->orderLine(2, 'TSHIRT-S-BLACK'),
         ]);
 
         foreach (['{products}', '{products_txt}'] as $partial) {
-            $this->assertStringContainsString('TSHIRT-RED-M', $data[$partial]);
-            $this->assertStringContainsString('TSHIRT-BLUE-L', $data[$partial]);
-            $this->assertSame(0, preg_match('/TSHIRT(?!-)/', $data[$partial]));
+            $this->assertStringContainsString('TSHIRT-S-WHITE', $data[$partial]);
+            $this->assertStringContainsString('TSHIRT-S-BLACK', $data[$partial]);
+            $this->assertStringNotContainsString('CATALOG-REF', $data[$partial]);
         }
     }
 
@@ -121,22 +108,30 @@ class MailServiceTest extends BaseTestCase
     {
         // OrderDetail::create() escapes the reference twice, so a quote is saved with a backslash
         $data = $this->orderConfData([
-            $this->orderLine(1, 'TSHIRT', "O\\'NEILL-01"),
-            $this->orderLine(2, 'TSHIRT', null),
+            $this->orderLine(1, "O\\'NEILL-01"),
+            $this->orderLine(2, null),
         ]);
 
         foreach (['{products}', '{products_txt}'] as $partial) {
-            $this->assertSame(1, preg_match('/O(\'|&#0?39;|&apos;)NEILL-01/', $data[$partial]));
-            $this->assertStringNotContainsString('\\', $data[$partial]);
-            $this->assertSame(0, preg_match('/TSHIRT/', $data[$partial]));
+            $this->assertStringContainsString("O'NEILL-01", html_entity_decode($data[$partial], ENT_QUOTES));
+            $this->assertStringNotContainsString('CATALOG-REF', $data[$partial]);
         }
     }
 
     private function orderConfData(array $orderLines)
     {
-        $this->mailType = \Configuration::get('PS_MAIL_TYPE');
+        $mailType = \Configuration::get('PS_MAIL_TYPE');
         \Configuration::set('PS_MAIL_TYPE', \Mail::TYPE_BOTH);
 
+        try {
+            return $this->invokeOrderConfData($orderLines);
+        } finally {
+            \Configuration::set('PS_MAIL_TYPE', $mailType);
+        }
+    }
+
+    private function invokeOrderConfData(array $orderLines)
+    {
         $order = $this->mock(\Order::class);
         $order->id_cart = 1;
         $order->method('getProducts')->willReturn($orderLines);
@@ -162,13 +157,13 @@ class MailServiceTest extends BaseTestCase
         return $method->invoke($mailService, $order);
     }
 
-    private function orderLine($productAttributeId, $catalogReference, $orderedReference)
+    private function orderLine($productAttributeId, $orderedReference)
     {
         return [
             'id_product' => 1,
             'product_attribute_id' => $productAttributeId,
             'id_customization' => 0,
-            'reference' => $catalogReference,
+            'reference' => 'CATALOG-REF',
             'product_reference' => $orderedReference,
             'product_name' => 'T-shirt',
             'product_quantity' => 1,

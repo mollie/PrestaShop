@@ -224,6 +224,7 @@ class MailService
 
             $product_var_tpl = [
                 'id_product' => $product['id_product'],
+                // order_detail.product_reference is saved escaped twice by OrderDetail::create()
                 'reference' => stripslashes((string) $product['product_reference']),
                 'name' => $product['product_name'],
                 'price' => $this->tools->displayPrice($product_price * $product['product_quantity'], $this->context->currency),
