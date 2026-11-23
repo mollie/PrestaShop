@@ -27,7 +27,7 @@ function upgrade_module_5_3_0(Mollie $module)
     /** @var OrderStateInstaller $orderStateInstaller */
     $orderStateInstaller = $module->getService(OrderStateInstaller::class);
 
-    $orderStateInstaller->install();
+    $orderStateInstaller->upgrade();
 
     return true;
 }

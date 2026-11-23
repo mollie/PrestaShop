@@ -27,7 +27,7 @@ function upgrade_module_4_2_0($module)
     /** @var OrderStateInstaller $orderStateInstaller */
     $orderStateInstaller = $module->getService(OrderStateInstaller::class);
 
-    $orderStateInstaller->install();
+    $orderStateInstaller->upgrade();
 
     $acceptedStatusId = Configuration::get(Config::MOLLIE_AUTHORIZABLE_PAYMENT_STATUS_AUTHORIZED);
     Configuration::updateValue(Config::MOLLIE_AUTHORIZABLE_PAYMENT_INVOICE_ON_STATUS, $acceptedStatusId);

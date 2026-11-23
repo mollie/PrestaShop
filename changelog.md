@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.9
++ Fixed a module reset or reinstall adding a new duplicate Mollie order status every time Chargeback or Partially refunded was set to "Skip this status" or its status was deleted; the existing Mollie status is reused. An upgrade from a version before 5.3.0 now keeps "Skip this status" on those two
+
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 + Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons
