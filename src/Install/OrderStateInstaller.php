@@ -33,32 +33,49 @@ class OrderStateInstaller implements InstallerInterface
     private $configurationAdapter;
     /** @var OrderStateImageService */
     private $orderStateImageService;
-    /** @var OrderStatusMapping */
-    private $orderStatusMapping;
 
     public function __construct(
         ModuleFactory $moduleFactory,
         ConfigurationAdapter $configurationAdapter,
-        OrderStateImageService $orderStateImageService,
-        OrderStatusMapping $orderStatusMapping
+        OrderStateImageService $orderStateImageService
     ) {
         $this->moduleFactory = $moduleFactory;
         $this->configurationAdapter = $configurationAdapter;
         $this->orderStateImageService = $orderStateImageService;
-        $this->orderStatusMapping = $orderStatusMapping;
+    }
+
+    /**
+     * Install and reset put Mollie's order states back on every mapping they own.
+     *
+     * @throws CouldNotInstallModule
+     */
+    public function install(): bool
+    {
+        return $this->installOrderStates(false);
+    }
+
+    /**
+     * Upgrades keep a merchant's "Skip this status" choice instead.
+     *
+     * @throws CouldNotInstallModule
+     */
+    public function upgrade(): bool
+    {
+        return $this->installOrderStates(true);
     }
 
     /**
      * @throws CouldNotInstallModule
      */
-    public function install(): bool
+    private function installOrderStates(bool $keepSkipped): bool
     {
         $this->installOrderState(
             Config::MOLLIE_STATUS_PARTIAL_REFUND,
             new OrderStateData(
                 'Partially refunded by Mollie',
                 '#6F8C9F'
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -66,7 +83,8 @@ class OrderStateInstaller implements InstallerInterface
             new OrderStateData(
                 'Awaiting Mollie payment',
                 '#4169E1'
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -74,7 +92,8 @@ class OrderStateInstaller implements InstallerInterface
             new OrderStateData(
                 'Partially shipped',
                 '#8A2BE2'
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -83,7 +102,8 @@ class OrderStateInstaller implements InstallerInterface
                 'Completed',
                 '#3d7d1c',
                 true
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -99,7 +119,8 @@ class OrderStateInstaller implements InstallerInterface
                 true,
                 EmailTemplate::PAYMENT,
                 true
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -115,7 +136,8 @@ class OrderStateInstaller implements InstallerInterface
                 true,
                 EmailTemplate::SHIPPED,
                 true
-            )
+            ),
+            $keepSkipped
         );
 
         $this->installOrderState(
@@ -123,25 +145,27 @@ class OrderStateInstaller implements InstallerInterface
             new OrderStateData(
                 'Mollie Chargeback',
                 '#E74C3C'
-            )
+            ),
+            $keepSkipped
         );
 
         return true;
     }
 
     /**
-     * Each shop keeps its own mapped state. Only shops without one get the new Mollie state.
+     * Each shop keeps its own mapped state. Shops without one get Mollie's state, reused when it
+     * already exists, so a reset no longer adds a duplicate every time.
      *
      * @throws CouldNotInstallModule
      */
-    private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData): void
+    private function installOrderState(string $orderStatus, OrderStateData $orderStateInstallerData, bool $keepSkipped): void
     {
         $shopIdsWithoutState = [];
 
         foreach (\Shop::getShops() as $shop) {
             $shopId = (int) $shop['id_shop'];
 
-            if ($this->orderStatusMapping->isSkipped($orderStatus, $shopId)) {
+            if ($keepSkipped && $this->isSkipped($orderStatus, $shopId)) {
                 continue;
             }
 
@@ -160,11 +184,46 @@ class OrderStateInstaller implements InstallerInterface
             return;
         }
 
-        $orderState = $this->createOrderState($orderStateInstallerData);
+        $orderState = $this->findModuleOrderState($orderStateInstallerData->getName());
+
+        if (!$orderState) {
+            $orderState = $this->createOrderState($orderStateInstallerData);
+        }
 
         foreach ($shopIdsWithoutState as $shopId) {
             $this->configurationAdapter->updateValue($orderStatus, (int) $orderState->id, $shopId);
         }
+    }
+
+    /**
+     * Only an explicit 0 on a status that allows skip. An empty value from an old install is not a skip.
+     */
+    private function isSkipped(string $key, int $shopId): bool
+    {
+        return in_array($key, Config::ORDER_STATUSES_WITH_SKIP, true)
+            && (string) $this->configurationAdapter->getStored($key, $shopId) === '0';
+    }
+
+    private function findModuleOrderState(string $name): ?OrderState
+    {
+        $query = (new \DbQuery())
+            ->select('os.id_order_state')
+            ->from('order_state', 'os')
+            ->innerJoin('order_state_lang', 'osl', 'osl.id_order_state = os.id_order_state')
+            ->where('os.module_name = "' . pSQL($this->moduleFactory->getModuleName()) . '"')
+            ->where('osl.name = "' . pSQL($name) . '"')
+            ->orderBy('os.deleted ASC, os.id_order_state ASC');
+
+        $orderStateId = (int) \Db::getInstance()->getValue($query);
+
+        if (!$orderStateId) {
+            return null;
+        }
+
+        $orderState = new OrderState($orderStateId);
+        $this->restoreIfDeleted($orderState);
+
+        return $orderState;
     }
 
     private function restoreIfDeleted(OrderState $orderState): void

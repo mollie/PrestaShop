@@ -3,7 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.9
-+ Fixed a module reset or reinstall overwriting the Advanced Settings order status mapping, which put back the default statuses and turned "Skip this status" choices into new Mollie order statuses
++ Fixed a module reset or reinstall adding a new duplicate Mollie order status every time a status was set to "Skip this status". A reset still restores the default order status mapping, and an upgrade from a version before 5.3.0 now keeps "Skip this status"
 
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
