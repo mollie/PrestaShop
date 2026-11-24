@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.9
++ Fixed the back office Orders page taking minutes to load on PrestaShop 1.7.7 and later for shops with a large order history and only a few Mollie payments, and listing an order twice when its cart had more than one Mollie payment
+
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 + Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons
