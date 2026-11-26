@@ -641,6 +641,7 @@ $_MODULE['<{mollie}prestashop>order_info_0e22fe7d45f8e5632a4abf369b24e29c'] = 'P
 $_MODULE['<{mollie}prestashop>order_info_cc61945cbbf46721a053467c395c666f'] = 'Hyvitetty';
 $_MODULE['<{mollie}prestashop>order_info_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Toimitus';
 $_MODULE['<{mollie}prestashop>order_info_deb1f82e928b7555f4630a0f358cdfcb'] = 'Hyvitys on käytettävissä, kun tilaus on toimitettu (kokonaan tai osittain).';
+$_MODULE['<{mollie}prestashop>order_info_020c2091aec3019d02193cef080bcf97'] = 'Tapahtumamaksu';
 $_MODULE['<{mollie}prestashop>modal_refund_ee095b00f8c055edf94c8d723aa390c1'] = 'Hyvitettävä määrä';
 $_MODULE['<{mollie}prestashop>modal_ship_03a1c16d4054ebcf6ff88e19a612ae80'] = 'Toimitettava määrä';
 $_MODULE['<{mollie}prestashop>modal_cancel_292f3463c1b27f10ce0cca5122e3d732'] = 'Peruutettava määrä';

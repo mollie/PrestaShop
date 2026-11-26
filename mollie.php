@@ -876,6 +876,7 @@ class Mollie extends PaymentModule
             $shippingAmount = 0.0;
             $shippingRefunded = false;
             $discounts = [];
+            $paymentFee = null;
             if ($mollieApiType === 'payments') {
                 // Refunds were embedded in the payment fetched above, no second round trip
                 $embeddedRefunds = isset($mollieApiResource->_embedded->refunds) && is_array($mollieApiResource->_embedded->refunds)
@@ -931,6 +932,15 @@ class Mollie extends PaymentModule
                         'name' => (string) $orderCartRule['name'],
                         'amount' => number_format(-(float) $orderCartRule['value'], 2, '.', ''),
                     ];
+                }
+
+                /** @var MolOrderPaymentFeeRepositoryInterface $molOrderPaymentFeeRepository */
+                $molOrderPaymentFeeRepository = $this->getService(MolOrderPaymentFeeRepositoryInterface::class);
+                /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
+                $molOrderPaymentFee = $molOrderPaymentFeeRepository->findOneBy(['id_order' => (int) $order->id]);
+                $feeTaxIncl = $molOrderPaymentFee ? round((float) $molOrderPaymentFee->fee_tax_incl, 2) : 0.0;
+                if (0.0 !== $feeTaxIncl) {
+                    $paymentFee = number_format($feeTaxIncl, 2, '.', '');
                 }
             }
 
@@ -1009,6 +1019,7 @@ class Mollie extends PaymentModule
                 'hasAnyShipment' => $hasAnyShipment,
                 'shipping_amount' => number_format($shippingAmount, 2, '.', ''),
                 'discounts' => $discounts,
+                'payment_fee' => $paymentFee,
                 'shipping_refunded' => $shippingRefunded,
                 'canShipAny' => $canShipAny,
                 'canCancelAny' => $canCancelAny,

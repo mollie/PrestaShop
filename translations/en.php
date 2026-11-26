@@ -456,6 +456,7 @@ $_MODULE['<{mollie}prestashop>order_info_44a50f07b4bdc57740901280f9eddaf5'] = 'C
 $_MODULE['<{mollie}prestashop>order_info_05ced64413f9ff5d3602c3e257f36204'] = 'Refund all';
 $_MODULE['<{mollie}prestashop>order_info_bae281a7678719c16775e7a6f707387c'] = 'Ship All';
 $_MODULE['<{mollie}prestashop>order_info_2b3da24bd1d2e6e26579695cd8d43914'] = 'Cancel All';
+$_MODULE['<{mollie}prestashop>order_info_020c2091aec3019d02193cef080bcf97'] = 'Payment fee';
 $_MODULE['<{mollie}prestashop>modal_refund_79ab75a04795c7c88ec8c49640de0a9d'] = 'Confirm Refund';
 $_MODULE['<{mollie}prestashop>modal_refund_1f009b7514b71292d06e8d6561b0c507'] = 'Are you sure you want to refund this order? This action cannot be undone.';
 $_MODULE['<{mollie}prestashop>modal_refund_ea4788705e6873b424c65e91c2846b19'] = 'Cancel';
