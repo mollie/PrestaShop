@@ -53,7 +53,7 @@ class MollieOrderService
             return (float) $mollieOrder->amountRemaining->value;
         }
 
-        // Mollie sends no amountRemaining while an authorized payment has nothing captured, and refuses a refund then
+        // Mollie can leave out amountRemaining on an authorized payment, and only the captured part can be refunded
         if ($mollieOrder->status === PaymentStatus::STATUS_AUTHORIZED) {
             $captured = isset($mollieOrder->amountCaptured) ? (float) $mollieOrder->amountCaptured->value : 0.0;
             $refunded = isset($mollieOrder->amountRefunded) ? (float) $mollieOrder->amountRefunded->value : 0.0;

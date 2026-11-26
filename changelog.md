@@ -3,7 +3,7 @@
 # Changelog #
 
 ## Changes in release 6.4.9
-+ Fixed the order page offering a refund on a card payment that was only authorized and not captured yet, which then failed with "The order could not be refunded!". The refund is now available once the payment is captured, and the page says so
++ Fixed the order page offering a refund on a payment that was only authorized and not captured yet, for example a card payment with manual capture, which then failed with "The order could not be refunded!". The refund is now available once the payment is captured, and the page says so
 
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5

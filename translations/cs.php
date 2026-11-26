@@ -641,6 +641,7 @@ $_MODULE['<{mollie}prestashop>order_info_0e22fe7d45f8e5632a4abf369b24e29c'] = 'Z
 $_MODULE['<{mollie}prestashop>order_info_cc61945cbbf46721a053467c395c666f'] = 'Vráceno';
 $_MODULE['<{mollie}prestashop>order_info_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Doprava';
 $_MODULE['<{mollie}prestashop>order_info_deb1f82e928b7555f4630a0f358cdfcb'] = 'Vrácení peněz je dostupné po odeslání objednávky (úplném nebo částečném).';
+$_MODULE['<{mollie}prestashop>order_info_2e44c77892be130d9a1552039e4e38a5'] = 'Vrácení peněz je dostupné po zachycení platby.';
 $_MODULE['<{mollie}prestashop>modal_refund_ee095b00f8c055edf94c8d723aa390c1'] = 'Množství k vrácení';
 $_MODULE['<{mollie}prestashop>modal_ship_03a1c16d4054ebcf6ff88e19a612ae80'] = 'Množství k odeslání';
 $_MODULE['<{mollie}prestashop>modal_cancel_292f3463c1b27f10ce0cca5122e3d732'] = 'Množství ke zrušení';

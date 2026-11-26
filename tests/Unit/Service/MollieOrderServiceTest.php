@@ -48,6 +48,16 @@ class MollieOrderServiceTest extends BaseTestCase
         $this->assertSame(0.0, $this->service->getRefundableAmount('tr_test'));
     }
 
+    public function testAuthorizedPaymentWithoutCaptureFieldsHasNothingToRefund()
+    {
+        $this->mockPayment([
+            'status' => 'authorized',
+            'amount' => $this->money('22.94'),
+        ]);
+
+        $this->assertSame(0.0, $this->service->getRefundableAmount('tr_test'));
+    }
+
     public function testAuthorizedPaymentCanRefundWhatWasCapturedMinusRefunds()
     {
         $this->mockPayment([
