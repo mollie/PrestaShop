@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'WICHTIG';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Wenn Sie Mollie-Abonnement-Attribute hinzufügen, stellen Sie sicher, dass Sie immer \'none\' als Fallback angeben.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'WICHTIGE Hinweise zum Versanddienstleister für Abonnements';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Stellen Sie sicher, dass Sie in den erweiterten Einstellungen einen Standard-Versanddienstleister für wiederkehrende Bestellungen auswählen.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Stellen Sie sicher, dass Sie unter “Abonnementoptionen” oben auf dieser Seite einen Standard-Versanddienstleister für wiederkehrende Bestellungen auswählen.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Der Versanddienstleister sollte alle unterstützten Shop-Regionen abdecken.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Der Versanddienstleister kann nach Aufgabe der ersten Abonnementbestellung nicht mehr geändert werden.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Die Preis- und Gewichtseinstellungen des ausgewählten Versanddienstleisters oder dessen Auswahl in Mollie sollten nicht geändert werden. Falls dies doch geschieht, müssen Abonnementbestellungen storniert und der Versanddienstleister in den Moduleinstellungen neu ausgewählt werden.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Erstellung von wiederkehrenden Bestellungen';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie for Prestashop erstellt automatisch eine neue Bestellung, wenn die vorherige Bestellung bezahlt ist.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Wiederkehrende Bestellungen verwenden immer den Produktpreis, der bei der Erstellung des entsprechenden Abonnements angegeben wurde.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Wiederkehrende Bestellungen überschreiben die Zahlungseinstellung „Methode\" und verwenden Sie die Payment API von Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Wiederkehrende Bestellungen überschreiben die Zahlungseinstellung „Methode“ und verwenden Sie die Payment API von Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Abonnements';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Abonnement-ID';

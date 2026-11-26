@@ -284,7 +284,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_77667491a6d007a7062b6699
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Vytvorenie opakujúcej sa objednávky';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie pre PrestaShop automaticky vytvorí novú objednávku po zaplatení predchádzajúcej objednávky.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Opakujúce sa objednávky vždy používajú cenu produktu, ktorá bola určená pri vytvorení príslušného predplatného.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Opakovaná objednávka prepíše nastavenie platobnej metódy ?Method? a bude používať platobné API od Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Opakovaná objednávka prepíše nastavenie platobnej metódy “Method” a bude používať platobné API od Mollie.';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_5e3e4ef8f2ed24f34757f4bea44660d6'] = 'Nepodarilo sa vytvoriť priečinok pre certifikát Apple Pay Direct';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_6d1a1343d17c6e8aa72d0e4c7b0fe6a6'] = 'Nie je možné vytvoriť priečinok z dôvodu chýbajúcich oprávnení na zápis: ';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_4b2c49344e2ee0dfb2fe0187e85006b5'] = 'Nepodarilo sa skopírovať certifikát Apple Pay Direct';
@@ -696,6 +696,7 @@ $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Nemô
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Vaša platba nebola úspešná. Skúste to znova.';
 $_MODULE['<{mollie}prestashop>mollie_9b2aabbefdab1d989039c4123acb49d3'] = 'Prehľad platieb';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3ed2fe868106a65405f5b630ff7cc75e'] = 'Keď pridávate atribúty predplatného Mollie, vždy uveďte možnosť \'none\' ako záložnú hodnotu.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Uistite sa, že ste v sekcii “Subscription options” v hornej časti tejto stránky vybrali predvoleného prepravcu pre opakujúce sa objednávky.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ae1e2b1a56f5ab4c96a9cc42f7354b62'] = 'Splatnosť bankového prevodu (dni)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_12fbbb7f463a52ee947e06fff848ea14'] = 'Počet dní, počas ktorých musia zákazníci dokončiť platbu bankovým prevodom (predvolené: 14, rozsah: 1-90)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ba9127fb12c61eaff05c2522f9351605'] = 'Režim zúčtovania';

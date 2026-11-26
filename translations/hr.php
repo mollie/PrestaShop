@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'VAŽNE napomene';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Kada dodajete Mollie pretplatničke atribute, obavezno uključite \'none\' kao sigurnosnu opciju.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'VAŽNE napomene o dostavljaču pretplate';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Obavezno odaberite zadanog dostavljača za ponavljajuće narudžbe u naprednim postavkama.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Obavezno odaberite zadanog dostavljača za ponavljajuće narudžbe u odjeljku “Opcije pretplate” na vrhu ove stranice.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Dostavljač bi trebao pokrivati sve podržane regije trgovine.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Dostavljač se ne može promijeniti nakon što je prva narudžba pretplate kreirana.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Odabrane postavke cijena/težine dostavljača ili odabir dostavljača u Mollie ne bi se trebale mijenjati. Ako se promijene, narudžbe pretplate moraju se otkazati i dostavljač ponovno odabrati u postavkama modula.';

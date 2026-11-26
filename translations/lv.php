@@ -283,7 +283,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_77667491a6d007a7062b6699
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Atkārtota pasūtījuma izveide';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie for Prestashop automātiski izveido jaunu pasūtījumu, kad iepriekšējais pasūtījums ir apmaksāts.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Atkārtoti pasūtījumi vienmēr izmanto produktu cenu, kas tika norādīta, kad tika izveidots attiecīgais abonements.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Atkārtots pasūtījums pārrakstīs ?Metode? maksājuma iestatījumu un izmantos Mollie maksājumu API.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Atkārtots pasūtījums pārrakstīs “Metode” maksājuma iestatījumu un izmantos Mollie maksājumu API.';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_5e3e4ef8f2ed24f34757f4bea44660d6'] = 'Neizdevās izveidot mapei Apple Pay Direct sertifikātu';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_6d1a1343d17c6e8aa72d0e4c7b0fe6a6'] = 'Nevar izveidot mapi, jo trūkst rakstīšanas atļauju: ';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_4b2c49344e2ee0dfb2fe0187e85006b5'] = 'Neizdevās kopēt Apple Pay Direct sertifikātu';
@@ -867,7 +867,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b6
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_484f5a79672cebe198ebdde45a1d672f'] = 'Dāvanu iepakojums';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc6397a5aedcc'] = 'Dāvanu iepakojuma funkcija abonementu pasūtījumiem netiek atbalstīta.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'SVARĪGI norādījumi par abonementu pārvadātāju';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Pārliecinieties, ka paplašinātajos iestatījumos ir izvēlēts noklusējuma pārvadātājs atkārtotajiem pasūtījumiem.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Pārliecinieties, ka šīs lapas augšdaļā sadaļā “Abonementu iestatījumi” ir izvēlēts noklusējuma pārvadātājs atkārtotajiem pasūtījumiem.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Izvēlētā pārvadātāja cenu/svara iestatījumi vai pārvadātāja izvēle Mollie nedrīkst mainīties. Ja tie mainās, abonementu pasūtījumi ir jāatceļ un pārvadātājs jāizvēlas atkārtoti moduļa iestatījumos.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_0eede552438475bdfe820c13f24c9399'] = 'Kopējā cena';
 $_MODULE['<{mollie}prestashop>subscriptionoptionstype_d27f3c2977da307854a974ade1316962'] = 'Izvēlieties pārvadātāju';

@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'SVARBUS punktai';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Pridėdami Mollie prenumeratos atributus, visada įtraukite „nėra“ kaip atsarginį variantą.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'SVARBŪS prenumeratos kurjerio punktai';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Būtinai pasirinkite numatytąjį kurjerį pasikartojančiams užsakymams išplėstiniuose nustatymuose.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Būtinai pasirinkite numatytąjį kurjerį pasikartojantiems užsakymams šio puslapio viršuje esančioje skiltyje “Prenumeratos parinktys”.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Kurjeris turėtų aptarnauti visus palaikomus parduotuvės regionus.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Kurjerio negalima keisti po pirmojo prenumeratos užsakymo pateikimo.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Pasirinkto kurjerio kainos/svorio nustatymai ar kurjerio pasirinkimas Mollie neturėtų keistis. Jei jie pasikeičia, prenumeratos užsakymai turi būti atšaukti ir kurjeris iš naujo pasirinktas modulio nustatymuose.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Pasikartojančio užsakymo kūrimas';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie skirta PrestaShop automatiškai sukuria naują užsakymą, kai ankstesnis užsakymas yra apmokėtas.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Pasikartojantys užsakymai visada naudoja produkto kainą, kuri buvo nurodyta kuriant susijusią prenumeratą.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Pasikartojantis užsakymas pakeis mokėjimo ?Būdo? nustatymą ir naudos Mollie mokėjimų API.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Pasikartojantis užsakymas pakeis mokėjimo “Būdo” nustatymą ir naudos Mollie mokėjimų API.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Prenumeratos';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Prenumeratos ID';

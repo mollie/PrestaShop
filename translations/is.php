@@ -284,7 +284,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_77667491a6d007a7062b6699
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Stofnun endurtekinna pantana';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie fyrir Prestashop býr sjálfkrafa til nýja pöntun þegar hin pöntun er greidd.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Endurtekningarpantanir nota alltaf vöruverðið sem var tilgreint þegar tengd áskrift var stofnuð.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Endurtekningarpantanir munu trampa ?Aðferð? greiðslustillinguna og munu nota Payments API Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Endurtekningarpantanir munu trampa “Aðferð” greiðslustillinguna og munu nota Payments API Mollie.';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_5e3e4ef8f2ed24f34757f4bea44660d6'] = 'Mistókst að búa til dir fyrir beint vottorð apple pay';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_6d1a1343d17c6e8aa72d0e4c7b0fe6a6'] = 'Má ekki búa til möppu vegna skorts á skrifréttindum: ';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_4b2c49344e2ee0dfb2fe0187e85006b5'] = 'Mistókst að afrita beint vottorð apple pay';
@@ -695,6 +695,7 @@ $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Þú 
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Greiðslan þín tókst ekki. Vinsamlegast reyndu aftur.';
 $_MODULE['<{mollie}prestashop>mollie_9b2aabbefdab1d989039c4123acb49d3'] = 'Yfirlit greiðslna';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3ed2fe868106a65405f5b630ff7cc75e'] = 'Þegar þú bætir við Mollie áskriftareiginleikum skaltu alltaf hafa \'none\' með sem varaleið.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Gakktu úr skugga um að velja sjálfgefinn flutningsaðila fyrir endurteknar pantanir í “Subscription options” efst á þessari síðu.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ae1e2b1a56f5ab4c96a9cc42f7354b62'] = 'Gjalddagi bankamillifærslu (dagar)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_12fbbb7f463a52ee947e06fff848ea14'] = 'Fjöldi daga sem viðskiptavinir hafa til að ljúka greiðslu með bankamillifærslu (sjálfgefið: 14, bil: 1-90)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ba9127fb12c61eaff05c2522f9351605'] = 'Innheimtuháttur';

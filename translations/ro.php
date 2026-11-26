@@ -284,7 +284,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_77667491a6d007a7062b6699
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Crearea unei comenzi recurente';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie pentru Prestashop creează automat o nouă comandă atunci când comanda anterioară este plătită.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Comenzile recurente folosesc întotdeauna prețul produsului care a fost specificat atunci când abonamentul aferent a fost creat.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Comanda recurentă va suprascrie setările de plată ?Metodă? și va folosi API-ul de plăți Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Comanda recurentă va suprascrie setările de plată “Metodă” și va folosi API-ul de plăți Mollie.';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_5e3e4ef8f2ed24f34757f4bea44660d6'] = 'Nu s-a reușit crearea dir pentru certificatul direct Apple Pay';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_6d1a1343d17c6e8aa72d0e4c7b0fe6a6'] = 'Nu se poate crea folder din cauza permisiunilor de scriere lipsă: ';
 $_MODULE['<{mollie}prestashop>applepaydirectcertificatehandler_4b2c49344e2ee0dfb2fe0187e85006b5'] = 'Nu s-a reușit copierea certificatului direct Apple Pay';
@@ -868,7 +868,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b6
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_484f5a79672cebe198ebdde45a1d672f'] = 'Ambalare cadou';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc6397a5aedcc'] = 'Funcția de ambalare pentru cadou nu este suportată pentru comenzile cu abonament.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'Aspecte IMPORTANTE privind transportatorul pentru abonamente';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Asigurați-vă că selectați transportatorul implicit pentru comenzile recurente în setările avansate.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Asigurați-vă că selectați transportatorul implicit pentru comenzile recurente în secțiunea “Opțiuni de abonament” din partea de sus a acestei pagini.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Setările de preț/greutate ale transportatorului selectat sau selecția transportatorului în Mollie nu trebuie să se modifice. Dacă se modifică, comenzile cu abonament trebuie anulate și transportatorul reselectat în setările modulului.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_0eede552438475bdfe820c13f24c9399'] = 'Preț total';
 $_MODULE['<{mollie}prestashop>subscriptionoptionstype_d27f3c2977da307854a974ade1316962'] = 'Alegeți transportatorul';

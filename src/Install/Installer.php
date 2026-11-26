@@ -151,13 +151,11 @@ class Installer implements InstallerInterface
         $this->installTab('AdminMolliePaymentMethods', 'AdminMollieAuthenticationParent', 'Payment Methods', true);
         $this->installTab('AdminMollieAdvancedSettings', 'AdminMollieAuthenticationParent', 'Advanced Settings', true);
         $this->installTab('AdminMollieSubscriptionOrders', 'AdminMollieAuthenticationParent', 'Subscriptions', true);
-        $this->installTab('AdminMollieSubscriptionFAQ', 'AdminMollieAuthenticationParent', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogs', 'AdminMollieAuthenticationParent', 'Logs', true);
         $this->installTab('AdminMolliePaymentOverview', 'AdminMollieAuthenticationParent', 'Payment overview', true);
         $this->installTab('AdminMolliePaymentMethodsParent', 'AdminMollieModuleMTR', 'Payment Methods', true);
         $this->installTab('AdminMollieAdvancedSettingsParent', 'AdminMollieModuleMTR', 'Advanced Settings', true);
         $this->installTab('AdminMollieSubscriptionOrdersParent', 'AdminMollieModuleMTR', 'Subscriptions', true);
-        $this->installTab('AdminMollieSubscriptionFAQParent', 'AdminMollieModuleMTR', 'Subscription FAQ', true);
         $this->installTab('AdminMollieLogsParent', 'AdminMollieModuleMTR', 'Logs', true);
         $this->installTab('AdminMolliePaymentOverviewParent', 'AdminMollieModuleMTR', 'Payment overview', true);
     }

@@ -42,8 +42,6 @@ class TabTranslationUtility
         'AdminMollieAdvancedSettings' => 'Advanced Settings',
         'AdminMollieSubscriptionOrdersParent' => 'Subscriptions',
         'AdminMollieSubscriptionOrders' => 'Subscriptions',
-        'AdminMollieSubscriptionFAQParent' => 'Subscription FAQ',
-        'AdminMollieSubscriptionFAQ' => 'Subscription FAQ',
         'AdminMollieLogsParent' => 'Logs',
         'AdminMollieLogs' => 'Logs',
         'AdminMolliePaymentOverviewParent' => 'Payment overview',

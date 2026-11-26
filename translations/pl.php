@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'WAŻNE punkty';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Kiedy dodajesz atrybuty subskrypcji Mollie, upewnij się, że zawsze uwzględniasz \'brak\' jako opcję rezerwową.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'WAŻNE punkty dotyczące przewoźnika subskrypcji';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Upewnij się, że wybrano domyślnego przewoźnika dla zamówień cyklicznych w ustawieniach zaawansowanych.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Upewnij się, że wybrano domyślnego przewoźnika dla zamówień cyklicznych w sekcji “Opcje subskrypcji” u góry tej strony.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Przewoźnik powinien obsługiwać wszystkie obsługiwane regiony sklepu.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Nie można zmienić przewoźnika po złożeniu pierwszego zamówienia subskrypcyjnego.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Wybrane ustawienia cenowe/wagowe przewoźnika lub wybór przewoźnika w Mollie nie powinny się zmieniać. Jeśli się zmienią, zamówienia subskrypcyjne muszą zostać anulowane, a przewoźnik ponownie wybrany w ustawieniach modułu.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Tworzenie zamówienia cyklicznego';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie dla Prestashop automatycznie utworzy nowe zamówienie, gdy poprzednie zamówienie zostanie opłacone.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Zamówienia cykliczne zawsze korzystają z ceny produktu, która została określona podczas tworzenia związanej z nią subskrypcji.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Zamówienie cykliczne nadpisze ustawienie płatności ?Method? i będzie korzystać z Mollie API Payments.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Zamówienie cykliczne nadpisze ustawienie płatności “Method” i będzie korzystać z Mollie API Payments.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Subskrypcje';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'ID subskrypcji';
