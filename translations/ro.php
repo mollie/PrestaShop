@@ -944,3 +944,5 @@ $_MODULE['<{mollie}prestashop>mollie_643562a9ae7099c8aabfdc93478db117'] = 'În p
 $_MODULE['<{mollie}prestashop>payment_history_1571756d5a655fafc2ece57e3f28a54e'] = '%s evenimente';
 $_MODULE['<{mollie}prestashop>mollie_76f0ed934de85cc7131910b32ede7714'] = 'Rambursare';
 $_MODULE['<{mollie}prestashop>payment_history_0a8bd13aeb647d6e626d5e6090bf199a'] = '1 eveniment';
+$_MODULE['<{mollie}prestashop>mollie_38e60c560dbb888e0e995122e2b5788e'] = 'Sigur doriți să capturați %1$s din %2$s?';
+$_MODULE['<{mollie}prestashop>mollie_810bab9c5a86134d2d08201cb4cea287'] = 'Sigur doriți să capturați %1$s din %2$s? Restul de %3$s va fi eliberat și nu mai poate fi capturat.';

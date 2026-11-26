@@ -26,6 +26,27 @@ $(document).ready(function () {
     }
   }
 
+  function capturableAmount() {
+    return parseFloat($('#mollie-capture-amount').attr('max'));
+  }
+
+  // A partial card capture is final at Mollie: the uncaptured rest of the authorization is released.
+  function captureConfirmMessage(amount) {
+    var capturableCents = Math.round(capturableAmount() * 100);
+    var amountCents = Math.round(parseFloat(amount) * 100);
+
+    if (isNaN(capturableCents) || isNaN(amountCents) || amountCents >= capturableCents) {
+      return trans.captureFullOrderConfirm;
+    }
+
+    var message = mollie_payment_method === 'creditcard' ? trans.capturePartialReleaseConfirm : trans.capturePartialConfirm;
+
+    return message
+      .replace('%1$s', (amountCents / 100).toFixed(2))
+      .replace('%2$s', (capturableCents / 100).toFixed(2))
+      .replace('%3$s', ((capturableCents - amountCents) / 100).toFixed(2));
+  }
+
   function showModal(action, productId, productAmount, orderline, availableQuantity, unitPrice) {
     var amount = productAmount;
 
@@ -91,7 +112,7 @@ $(document).ready(function () {
     } else if (action === 'capture' || action === 'captureAll') {
       // Update modal message based on action type
       if (action === 'captureAll') {
-        $('#mollie-capture-modal-message').text(trans.captureFullOrderConfirm);
+        $('#mollie-capture-modal-message').text(captureConfirmMessage(amount));
       } else {
         $('#mollie-capture-modal-message').text(trans.capturePaymentConfirm);
       }
@@ -182,7 +203,7 @@ $(document).ready(function () {
 
   $('#mollie-initiate-capture').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || parseFloat(amount) > capturableAmount()) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
@@ -195,7 +216,7 @@ $(document).ready(function () {
 
   $('#mollie-capture-all').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || parseFloat(amount) > capturableAmount()) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }

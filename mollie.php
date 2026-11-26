@@ -639,6 +639,7 @@ class Mollie extends PaymentModule
                         'transaction_id' => $mollieTransactionId,
                         'resource' => $mollieApiType,
                         'order_id' => $orderId,
+                        'mollie_payment_method' => isset($transaction['method']) ? $transaction['method'] : null,
                         'orderLines' => $order->getProducts(),
                         'trans' => [
                             'processing' => $this->l('Processing...'),
@@ -647,6 +648,8 @@ class Mollie extends PaymentModule
                             'refundPartialConfirm' => $this->l('Are you sure you want to refund %s? This action cannot be undone.'),
                             'refundOrderConfirm' => $this->l('Are you sure you want to refund this order? This action cannot be undone.'),
                             'captureFullOrderConfirm' => $this->l('Are you sure you want to capture the full order amount?'),
+                            'capturePartialConfirm' => $this->l('Are you sure you want to capture %1$s of %2$s?'),
+                            'capturePartialReleaseConfirm' => $this->l('Are you sure you want to capture %1$s of %2$s? The remaining %3$s will be released and can no longer be captured.'),
                             'capturePaymentConfirm' => $this->l('Are you sure you want to capture this payment?'),
                             'cancelFullOrderConfirm' => $this->l('Are you sure you want to cancel the entire order? This action cannot be undone.'),
                             'cancelOrderLineConfirm' => $this->l('Are you sure you want to cancel this order line? This action cannot be undone.'),

@@ -943,3 +943,5 @@ $_MODULE['<{mollie}prestashop>mollie_643562a9ae7099c8aabfdc93478db117'] = 'Apstr
 $_MODULE['<{mollie}prestashop>payment_history_1571756d5a655fafc2ece57e3f28a54e'] = '%s notikumi';
 $_MODULE['<{mollie}prestashop>mollie_76f0ed934de85cc7131910b32ede7714'] = 'Atmaksa';
 $_MODULE['<{mollie}prestashop>payment_history_0a8bd13aeb647d6e626d5e6090bf199a'] = '1 notikums';
+$_MODULE['<{mollie}prestashop>mollie_38e60c560dbb888e0e995122e2b5788e'] = 'Vai tiešām vēlaties iekasēt %1$s no %2$s?';
+$_MODULE['<{mollie}prestashop>mollie_810bab9c5a86134d2d08201cb4cea287'] = 'Vai tiešām vēlaties iekasēt %1$s no %2$s? Atlikušie %3$s tiks atbrīvoti, un tos vairs nevarēs iekasēt.';

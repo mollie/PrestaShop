@@ -702,3 +702,5 @@ $_MODULE['<{mollie}prestashop>mollie_643562a9ae7099c8aabfdc93478db117'] = 'Käsi
 $_MODULE['<{mollie}prestashop>payment_history_1571756d5a655fafc2ece57e3f28a54e'] = '%s tapahtumaa';
 $_MODULE['<{mollie}prestashop>mollie_76f0ed934de85cc7131910b32ede7714'] = 'Hyvitys';
 $_MODULE['<{mollie}prestashop>payment_history_0a8bd13aeb647d6e626d5e6090bf199a'] = '1 tapahtuma';
+$_MODULE['<{mollie}prestashop>mollie_38e60c560dbb888e0e995122e2b5788e'] = 'Oletko varma, että haluat veloittaa %1$s summasta %2$s?';
+$_MODULE['<{mollie}prestashop>mollie_810bab9c5a86134d2d08201cb4cea287'] = 'Oletko varma, että haluat veloittaa %1$s summasta %2$s? Jäljellä olevat %3$s vapautetaan, eikä niitä voi enää veloittaa.';
