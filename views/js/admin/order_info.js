@@ -199,7 +199,7 @@ $(document).ready(function () {
 
   $('#mollie-initiate-capture').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || parseFloat(amount) > parseFloat($('#mollie-capture-amount').attr('max'))) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
@@ -212,7 +212,7 @@ $(document).ready(function () {
 
   $('#mollie-capture-all').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0) {
+    if (!amount || amount <= 0 || parseFloat(amount) > parseFloat($('#mollie-capture-amount').attr('max'))) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
