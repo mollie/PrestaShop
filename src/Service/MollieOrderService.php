@@ -13,6 +13,7 @@
 namespace Mollie\Service;
 
 use Mollie;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Exception\MollieException;
 use Mollie\Utility\NumberUtility;
 use Mollie\Utility\TransactionUtility;
@@ -50,6 +51,14 @@ class MollieOrderService
 
         if (isset($mollieOrder->amountRemaining)) {
             return (float) $mollieOrder->amountRemaining->value;
+        }
+
+        // Mollie sends no amountRemaining while an authorized payment has nothing captured, and refuses a refund then
+        if ($mollieOrder->status === PaymentStatus::STATUS_AUTHORIZED) {
+            $captured = isset($mollieOrder->amountCaptured) ? (float) $mollieOrder->amountCaptured->value : 0.0;
+            $refunded = isset($mollieOrder->amountRefunded) ? (float) $mollieOrder->amountRefunded->value : 0.0;
+
+            return max(0.0, NumberUtility::minus($captured, $refunded));
         }
 
         if (isset($mollieOrder->amount)) {
