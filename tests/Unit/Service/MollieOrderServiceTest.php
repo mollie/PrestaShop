@@ -37,37 +37,27 @@ class MollieOrderServiceTest extends BaseTestCase
         $this->service = new MollieOrderService($module);
     }
 
-    public function testAuthorizedPaymentWithNothingCapturedHasNothingToRefund()
+    /**
+     * @dataProvider authorizedPaymentProvider
+     */
+    public function testAuthorizedPaymentCanRefundOnlyWhatWasCaptured(array $amounts, float $expected)
     {
-        $this->mockPayment([
-            'status' => 'authorized',
-            'amount' => $this->money('22.94'),
-            'amountCaptured' => $this->money('0.00'),
-        ]);
+        $fields = ['status' => 'authorized', 'amount' => $this->money('22.94')];
+        foreach ($amounts as $name => $value) {
+            $fields[$name] = $this->money($value);
+        }
+        $this->mockPayment($fields);
 
-        $this->assertSame(0.0, $this->service->getRefundableAmount('tr_test'));
+        $this->assertSame($expected, $this->service->getRefundableAmount('tr_test'));
     }
 
-    public function testAuthorizedPaymentWithoutCaptureFieldsHasNothingToRefund()
+    public function authorizedPaymentProvider()
     {
-        $this->mockPayment([
-            'status' => 'authorized',
-            'amount' => $this->money('22.94'),
-        ]);
-
-        $this->assertSame(0.0, $this->service->getRefundableAmount('tr_test'));
-    }
-
-    public function testAuthorizedPaymentCanRefundWhatWasCapturedMinusRefunds()
-    {
-        $this->mockPayment([
-            'status' => 'authorized',
-            'amount' => $this->money('22.94'),
-            'amountCaptured' => $this->money('10.00'),
-            'amountRefunded' => $this->money('4.00'),
-        ]);
-
-        $this->assertSame(6.0, $this->service->getRefundableAmount('tr_test'));
+        return [
+            'nothing captured' => [['amountCaptured' => '0.00'], 0.0],
+            'capture fields left out' => [[], 0.0],
+            'partly captured and refunded' => [['amountCaptured' => '10.00', 'amountRefunded' => '4.00'], 6.0],
+        ];
     }
 
     public function testPaidPaymentUsesRemainingAmountFromMollie()
