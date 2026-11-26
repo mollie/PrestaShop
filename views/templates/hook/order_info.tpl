@@ -120,6 +120,12 @@
                   <td>{$discount.amount|escape:'html':'UTF-8'}</td>
                 </tr>
               {/foreach}
+              {if $payment_fee}
+                <tr>
+                  <td><strong>{l s='Payment fee' mod='mollie'}</strong></td>
+                  <td>{$payment_fee|escape:'html':'UTF-8'}</td>
+                </tr>
+              {/if}
             {/if}
           {elseif isset($product->description)}
             <tr>

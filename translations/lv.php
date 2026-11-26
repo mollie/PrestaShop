@@ -835,6 +835,7 @@ $_MODULE['<{mollie}prestashop>order_info_3601146c4e948c32b6424d2c0a7f0118'] = 'C
 $_MODULE['<{mollie}prestashop>order_info_deb10517653c255364175796ace3553f'] = 'Produkts';
 $_MODULE['<{mollie}prestashop>order_info_81f04888e2363d334eeee1d13885509d'] = 'Atmaksas summa (Maks.: %s)';
 $_MODULE['<{mollie}prestashop>order_info_bae281a7678719c16775e7a6f707387c'] = 'Nosūtīt visu';
+$_MODULE['<{mollie}prestashop>order_info_020c2091aec3019d02193cef080bcf97'] = 'Komisijas maksa';
 $_MODULE['<{mollie}prestashop>paymentfeeprovider_a1fa8d7a9942f24895492dcaf7f3e16d'] = 'Atlaide: %1s';
 $_MODULE['<{mollie}prestashop>paymentfeeprovider_0b135af05e690cf2fca288a143759716'] = 'Maksājuma maksa: %1s';
 $_MODULE['<{mollie}prestashop>refundservice_f69da2ac3ad5ddf4ebeabc5d457e60d0'] = 'Pilnā atmaksa ir veiksmīgi apstrādāta.';

@@ -718,6 +718,7 @@ $_MODULE['<{mollie}prestashop>return_df0a9d9ea4e1dc6edd2b9a10607daa4c'] = 'Grei�
 $_MODULE['<{mollie}prestashop>return_b4199bc53810851932428ef00f9042b1'] = 'Þú hefur ekki heimild til að skoða þessa síðu.';
 $_MODULE['<{mollie}prestashop>order_info_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Sending';
 $_MODULE['<{mollie}prestashop>order_info_deb1f82e928b7555f4630a0f358cdfcb'] = 'Endurgreiðsla er í boði eftir að pöntunin hefur verið send (að fullu eða að hluta).';
+$_MODULE['<{mollie}prestashop>order_info_020c2091aec3019d02193cef080bcf97'] = 'Greiðslugjald';
 $_MODULE['<{mollie}prestashop>modal_refund_ee095b00f8c055edf94c8d723aa390c1'] = 'Magn til að endurgreiða';
 $_MODULE['<{mollie}prestashop>modal_ship_03a1c16d4054ebcf6ff88e19a612ae80'] = 'Magn til að senda';
 $_MODULE['<{mollie}prestashop>modal_cancel_292f3463c1b27f10ce0cca5122e3d732'] = 'Magn til að hætta við';

@@ -836,6 +836,7 @@ $_MODULE['<{mollie}prestashop>order_info_3601146c4e948c32b6424d2c0a7f0118'] = 'P
 $_MODULE['<{mollie}prestashop>order_info_deb10517653c255364175796ace3553f'] = 'Produs';
 $_MODULE['<{mollie}prestashop>order_info_81f04888e2363d334eeee1d13885509d'] = 'Suma de rambursat (Max.: %s)';
 $_MODULE['<{mollie}prestashop>order_info_bae281a7678719c16775e7a6f707387c'] = 'Expediați tot';
+$_MODULE['<{mollie}prestashop>order_info_020c2091aec3019d02193cef080bcf97'] = 'Taxa de plată';
 $_MODULE['<{mollie}prestashop>paymentfeeprovider_a1fa8d7a9942f24895492dcaf7f3e16d'] = 'Reducere: %1s';
 $_MODULE['<{mollie}prestashop>paymentfeeprovider_0b135af05e690cf2fca288a143759716'] = 'Taxă de plată: %1s';
 $_MODULE['<{mollie}prestashop>refundservice_f69da2ac3ad5ddf4ebeabc5d457e60d0'] = 'Rambursarea integrală a fost procesată cu succes.';
