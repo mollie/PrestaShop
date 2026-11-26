@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'Punti IMPORTANTI';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = ' make sure you always include \'none\' as a fallback.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'Punti IMPORTANTI sul vettore per l\'abbonamento ';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Assicurati di selezionare il vettore predefinito per gli ordini ricorrenti nelle impostazioni avanzate';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Assicurati di selezionare il vettore predefinito per gli ordini ricorrenti in “Opzioni abbonamento”, in cima a questa pagina.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Il vettore dovrebbe coprire tutte le regioni supportate dal negozio.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Il vettore non può essere cambiato dopo che è stato effettuato il primo ordine di abbonamento.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = ' subscription orders must be cancelled and carrier re-selected in module settings.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Creazione di ordini ricorrenti';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie for Prestashop crea automaticamente un nuovo ordine quando l\'ordine precedente viene pagato.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Gli ordini ricorrenti utilizzano sempre il prezzo del prodotto specificato al momento della creazione del relativo abbonamento.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'L\'ordine ricorrente sovrascriverà l\'impostazione del ?Metodo? di pagamento e utilizzerà il Payments API di Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'L\'ordine ricorrente sovrascriverà l\'impostazione del “Metodo” di pagamento e utilizzerà il Payments API di Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Abbonamenti';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'ID abbonamento';

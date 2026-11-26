@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'FONTOS pontok';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Amikor Mollie előfizetési attribútumokat adsz hozzá, győződj meg arról, hogy mindig tartalmazza a \'nincs\' opciót mint visszaállítás.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'FONTOS előfizetési szállító pontok';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Győződjön meg róla, hogy kiválasztja az alapértelmezett szállítót az ismétlődő rendelésekhez a haladó beállításokban.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Győződjön meg róla, hogy kiválasztja az alapértelmezett szállítót az ismétlődő rendelésekhez az oldal tetején található “Előfizetési beállítások” részben.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'A szállítónak le kell fednie az összes támogatott bolt régiót.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'A szállító nem változtatható meg az első előfizetési rendelés feladása után.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'A kiválasztott szállító árazási/súlybeállításai vagy a Mollie-ban való szállító kiválasztása nem változhat. Ha változnak, az előfizetési rendeléseket törölni kell, és a szállítót újra ki kell választani a modul beállításaiban.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Ismétlődő rendelés létrehozása';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'A Mollie a Prestashop számára automatikusan új rendelést hoz létre, amikor az előző rendelést kifizették.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Az ismétlődő rendelések mindig azt az árat használják, amelyet a kapcsolódó előfizetés létrehozásakor megadtak.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Az ismétlődő rendelés felülírja a ?Módszer? kifizetési beállítást, és a Mollie Kifizetési API-ját fogja használni.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Az ismétlődő rendelés felülírja a “Módszer” kifizetési beállítást, és a Mollie Kifizetési API-ját fogja használni.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Előfizetések';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Előfizetés azonosító';

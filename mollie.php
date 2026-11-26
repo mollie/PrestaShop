@@ -95,8 +95,6 @@ class Mollie extends PaymentModule
     const ADMIN_MOLLIE_PAYMENT_METHODS_CONTROLLER = 'AdminMolliePaymentMethods';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_PARENT_CONTROLLER = 'AdminMollieSubscriptionOrdersParent';
     const ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER = 'AdminMollieSubscriptionOrders';
-    const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER = 'AdminMollieSubscriptionFAQParent';
-    const ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER = 'AdminMollieSubscriptionFAQ';
 
     const ADMIN_MOLLIE_LOGS_CONTROLLER = 'AdminMollieLogs';
 
@@ -1487,20 +1485,6 @@ class Mollie extends PaymentModule
                 'name' => $this->getTabTranslations('Subscriptions'),
                 'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_ORDERS_CONTROLLER,
                 'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
-            ],
-            // Subscription FAQ - sidebar entry (parent)
-            [
-                'name' => $this->getTabTranslations('Subscription FAQ'),
-                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_PARENT_CONTROLLER,
-                'parent_class_name' => self::ADMIN_MOLLIE_CONTROLLER,
-                'module_tab' => true,
-            ],
-            // Subscription FAQ - horizontal tab (child)
-            [
-                'name' => $this->getTabTranslations('Subscription FAQ'),
-                'class_name' => self::ADMIN_MOLLIE_SUBSCRIPTION_FAQ_CONTROLLER,
-                'parent_class_name' => self::ADMIN_MOLLIE_TAB_CONTROLLER,
-                'module_tab' => true,
             ],
             // Logs - sidebar entry (parent)
             [

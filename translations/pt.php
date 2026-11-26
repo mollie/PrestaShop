@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'Pontos IMPORTANTES';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Quando adicionar atributos de subscrição Mollie, certifique-se de que inclui sempre \"nenhum\" como alternativa.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'Pontos IMPORTANTES sobre a transportadora de subscrição';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Certifique-se de selecionar a transportadora padrão para encomendas recorrentes nas definições avançadas.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Certifique-se de selecionar a transportadora padrão para encomendas recorrentes em “Opções de subscrição”, no topo desta página.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'A transportadora deve cobrir todas as regiões suportadas pela loja.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'A transportadora não pode ser alterada após a primeira encomenda de subscrição ser efetuada.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'As definições de preço/peso da transportadora selecionada ou a seleção da transportadora na Mollie não devem ser alteradas. Se forem, as encomendas de subscrição devem ser canceladas e a transportadora deve ser novamente selecionada nas definições do módulo.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Criação de encomendas recorrentes';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'A Mollie for Prestashop cria automaticamente uma nova encomenda quando a encomenda anterior é paga.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'As encomendas recorrentes utilizam sempre o preço do produto que foi indicado quando a respetiva subscrição foi criada.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'A encomenda recorrente substituirá a definição de pagamento \"Método\" e utilizará a API de pagamento da Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'A encomenda recorrente substituirá a definição de pagamento “Método” e utilizará a API de pagamento da Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Subscrições';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'ID da subscrição';

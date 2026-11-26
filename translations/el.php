@@ -694,6 +694,7 @@ $_MODULE['<{mollie}prestashop>mollie_368aadb5943efe2a745f5a058a12d4d4'] = 'Δε�
 $_MODULE['<{mollie}prestashop>mollie_c47c45eb119ed6b6fe3ffa4499d43d52'] = 'Η πληρωμή σας δεν ολοκληρώθηκε με επιτυχία. Δοκιμάστε ξανά.';
 $_MODULE['<{mollie}prestashop>mollie_9b2aabbefdab1d989039c4123acb49d3'] = 'Επισκόπηση πληρωμών';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3ed2fe868106a65405f5b630ff7cc75e'] = 'Όταν προσθέτετε χαρακτηριστικά συνδρομής Mollie, βεβαιωθείτε ότι περιλαμβάνετε πάντα το \'none\' ως εναλλακτική.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Βεβαιωθείτε ότι έχετε επιλέξει τον προεπιλεγμένο μεταφορέα για τις επαναλαμβανόμενες παραγγελίες στην ενότητα “Subscription options” στο επάνω μέρος αυτής της σελίδας.';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ae1e2b1a56f5ab4c96a9cc42f7354b62'] = 'Προθεσμία τραπεζικού εμβάσματος (ημέρες)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_12fbbb7f463a52ee947e06fff848ea14'] = 'Αριθμός ημερών που έχουν οι πελάτες για να ολοκληρώσουν την πληρωμή με τραπεζικό έμβασμα (προεπιλογή: 14, εύρος: 1-90)';
 $_MODULE['<{mollie}prestashop>adminmolliepaymentmethodscontroller_ba9127fb12c61eaff05c2522f9351605'] = 'Λειτουργία χρέωσης';

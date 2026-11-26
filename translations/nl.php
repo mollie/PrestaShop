@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'BELANGRIJK';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Wanneer je Mollie abonnementsattributen toevoegt, zorg er dan voor dat je altijd \'geen\' toevoegt als fallback.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'BELANGRIJKE abonnementsvervoerder punten';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Zorg ervoor dat je de standaard vervoerder voor terugkerende bestellingen selecteert in geavanceerde instellingen.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Zorg ervoor dat je de standaard vervoerder voor terugkerende bestellingen selecteert bij “Abonnementsopties” bovenaan deze pagina.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Vervoerder moet alle ondersteunde shopregio\'s dekken.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Vervoerder kan niet worden gewijzigd na het plaatsen van de eerste abonnementsbestelling.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Geselecteerde vervoerder prijzen/gewicht instellingen of vervoerder selectie in Mollie mogen niet veranderen. Als ze dat wel doen, moeten abonnementsbestellingen worden geannuleerd en vervoerder opnieuw geselecteerd in module instellingen.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Terugkerende bestelling aanmaken';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie for PrestaShop creëert automatisch een nieuw order wanneer het vorige order is betaald.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Voor terugkerende bestellingen is de productprijs van toepassing die werd bepaald wanneer het hieraan gekoppelde abonnement werd aangemaakt.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Terugkerende orders overschrijven de instellingen voor ?Betaalmethoden? en maken gebruik van de Payments API van Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Terugkerende orders overschrijven de instellingen voor “Betaalmethoden” en maken gebruik van de Payments API van Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Abonnementen';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Identificatie abonnement';

@@ -11,9 +11,9 @@ export class SubscriptionsPage {
   }
 
   async gotoFAQ() {
-    await this.page.goto('/admin1/index.php?controller=AdminMollieSubscriptionFAQ');
+    await this.page.goto('/admin1/index.php?controller=AdminMollieSubscriptionOrders');
     await dismissInvalidTokenWall(this.page);
-    await this.page.getByText('Subscription creation').first().waitFor({ timeout: 20_000 });
+    await this.page.locator('#mollie-subscription-faq').waitFor({ timeout: 20_000 });
   }
 
   async selectCarrierAndSave(optionIndex: number) {

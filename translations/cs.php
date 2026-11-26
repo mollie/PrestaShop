@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'DŮLEŽITÉ body';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Když přidáváte atributy předplatného Mollie, ujistěte se, že vždy zahrnete \'žádný\' jako záložní možnost.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'DŮLEŽITÉ body týkající se dopravce předplatného';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Ujistěte se, že jste vybrali výchozího dopravce pro opakující se objednávky v pokročilých nastaveních.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Ujistěte se, že jste vybrali výchozího dopravce pro opakující se objednávky v sekci “Možnosti předplatného” v horní části této stránky.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Dopravce by měl pokrývat všechny podporované regiony obchodu.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Dopravce nemůže být změněn po zadání první objednávky předplatného.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Vybrané nastavení cen/vah dopravce nebo výběr dopravce v Mollie by se neměly měnit. Pokud se změní, objednávky předplatného musí být zrušeny a dopravce znovu vybrán v nastavení modulu.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Vytváření opakující se objednávky';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie pro Prestashop automaticky vytvoří novou objednávku, když je předchozí objednávka zaplacena.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Opakované objednávky mají vždy stejnou cenu odpovídající ceně produktu v době vytvoření předplatného.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Opakovaná objednávka přepíše nastavení platby ?Method? a bude používat Mollie Platby API.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Opakovaná objednávka přepíše nastavení platby “Method” a bude používat Mollie Platby API.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Předplatné';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'ID předplatného';

@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'VIGTIGE punkter';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Når du tilføjer Mollie abonnementsattributter, skal du sørge for altid at inkludere \'ingen\' som en backup.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'VIGTIGE punkter om abonnements-transportør';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Sørg for at vælge standardtransportør for tilbagevendende ordrer i avancerede indstillinger.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Sørg for at vælge standardtransportør for tilbagevendende ordrer under “Abonnementsindstillinger” øverst på denne side.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Transportøren skal dække alle understøttede butiksregioner.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Transportøren kan ikke ændres efter første abonnementsordre er placeret.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Valgte transportørs pris-/vægtsindstillinger eller transportørvalg i Mollie må ikke ændres. Hvis de gør, skal abonnementsordrer annulleres og transportør vælges igen i modulindstillingerne.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Oprettelse af tilbagevendende ordre';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie til Prestashop opretter automatisk en ny ordre, når den tidligere ordre er betalt.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Tilbagevendende ordrer bruger altid den produktpris, der blev angivet, da det relaterede abonnement blev oprettet.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Tilbagevendende ordre vil overskrive indstillingen for ?Metode? betalingsindstillingen og vil bruge Mollies Betalings-API.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Tilbagevendende ordre vil overskrive indstillingen for “Metode” betalingsindstillingen og vil bruge Mollies Betalings-API.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Abonnementer';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Abonnements-ID';

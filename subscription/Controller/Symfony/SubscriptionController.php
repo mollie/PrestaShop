@@ -41,6 +41,7 @@ if (!defined('_PS_VERSION_')) {
 class SubscriptionController extends AbstractSymfonyController
 {
     private const FILE_NAME = 'SubscriptionController';
+    private const FAQ_FILE_NAME = 'SubscriptionFAQController';
 
     /** @var ?ContainerInterface */
     protected $container;
@@ -101,6 +102,7 @@ class SubscriptionController extends AbstractSymfonyController
             'links' => [
                 'help_url' => 'https://docs.mollie.com/docs/prestashop-manage-subscriptions',
             ],
+            'faq' => $this->getFAQTexts(),
         ]);
     }
 
@@ -243,5 +245,29 @@ class SubscriptionController extends AbstractSymfonyController
         return new Response(
             $this->twig->render($view, $parameters)
         );
+    }
+
+    private function getFAQTexts(): array
+    {
+        return [
+            'faqTitle' => $this->module->l('Subscription FAQ', 'mollie'),
+            'subscriptionCreationTittle' => $this->module->l('Subscription creation', self::FAQ_FILE_NAME),
+            'subscriptionCreation' => $this->module->l('To create a subscription option for a product variation, assign it a Mollie subscription attribute.', self::FAQ_FILE_NAME),
+            'importantInformationTittle' => $this->module->l('IMPORTANT points', self::FAQ_FILE_NAME),
+            'importantInformation' => $this->module->l('When you add Mollie subscription attributes, make sure you always include \'none\' as a fallback.', self::FAQ_FILE_NAME),
+            'carrierInformationTitle' => $this->module->l('IMPORTANT subscription carrier points', self::FAQ_FILE_NAME),
+            'carrierInformation1' => $this->module->l('Make sure to select the default carrier for recurring orders in the Subscription options at the top of this page.', self::FAQ_FILE_NAME),
+            'carrierInformation2' => $this->module->l('Carrier should cover all supported shop regions.', self::FAQ_FILE_NAME),
+            'carrierInformation3' => $this->module->l('Carrier cannot be changed after first subscription order is placed.', self::FAQ_FILE_NAME),
+            'carrierInformation4' => $this->module->l('Selected carrier pricing/weight settings or carrier selection in Mollie should not change. If they do, subscription orders must be cancelled and carrier re-selected in module settings.', self::FAQ_FILE_NAME),
+            'cartRuleTitle' => $this->module->l('Cart rules', self::FAQ_FILE_NAME),
+            'cartRule1' => $this->module->l('Do not use cart rules with subscription products as this will cause errors due to incorrect pricing.', self::FAQ_FILE_NAME),
+            'giftWrappingTitle' => $this->module->l('Gift wrapping', self::FAQ_FILE_NAME),
+            'giftWrapping1' => $this->module->l('Gift wrapping feature is not supported for subscription orders.', self::FAQ_FILE_NAME),
+            'subscriptionOrderLogicTitle' => $this->module->l('Recurring order creation', self::FAQ_FILE_NAME),
+            'recurringOrderCreation' => $this->module->l('Mollie for Prestashop automatically creates a new order when the previous order is paid for.', self::FAQ_FILE_NAME),
+            'recurringOrderPrice' => $this->module->l('Recurring orders always use the product price that was specified when the related subscription was created.', self::FAQ_FILE_NAME),
+            'recurringOrderAPIChanges' => $this->module->l('Recurring order will override the “Method” payment setting and will be using Mollie’s Payment API.', self::FAQ_FILE_NAME),
+        ];
     }
 }

@@ -53,5 +53,5 @@ admin_subscription_faq_index:
     methods: GET
     defaults:
         _controller: Mollie\Subscription\Controller\Symfony\SubscriptionFAQController::indexAction
-        _legacy_controller: AdminMollieSubscriptionFAQ
+        _legacy_controller: AdminMollieSubscriptionOrders
         _legacy_link: AdminMollieSubscriptionFAQ

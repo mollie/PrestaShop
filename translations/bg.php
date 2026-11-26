@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'ВАЖНИ точки.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Когато добавяте Mollie абонамент атрибути, винаги включвайте \'никакви\' като резервна възможност.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'ВАЖНИ точки за абонаментния куриер';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Уверете се, че сте избрали куриер по подразбиране за повтарящи се поръчки в разширените настройки.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Уверете се, че сте избрали куриер по подразбиране за повтарящи се поръчки в “Опции за абонамент” в горната част на тази страница.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Куриерът трябва да покрива всички поддържани региони на магазина.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Куриерът не може да бъде променен след поставяне на първата абонаментна поръчка.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Избраните ценови/тегловни настройки на куриера или изборът на куриер в Mollie не трябва да се променят. Ако се променят, абонаментните поръчки трябва да бъдат прекратени и куриерът да бъде избран отново в настройките на модула.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Създаване на повтаряща се поръчка';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie за Prestashop автоматично създава нова поръчка, когато предишната поръчка е платена.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Повтарящите се поръчки винаги използват цената на продукта, която беше уточнена при създаването на съответния абонамент.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Повтарящата се поръчка ще замени настройката за плащане ?Метод? и ще използва API за плащания на Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'Повтарящата се поръчка ще замени настройката за плащане “Метод” и ще използва API за плащания на Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Абонаменти';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'Абонаментен ID';

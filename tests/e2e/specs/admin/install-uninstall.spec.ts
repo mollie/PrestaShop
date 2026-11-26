@@ -22,9 +22,9 @@ test('module tabs are all registered', async ({ page }) => {
     'subtab-AdminMolliePaymentMethodsParent',
     'subtab-AdminMollieAdvancedSettingsParent',
     'subtab-AdminMollieSubscriptionOrdersParent',
-    'subtab-AdminMollieSubscriptionFAQParent',
     'subtab-AdminMollieLogsParent',
   ]) {
     await expect(page.locator(`#${tab}`)).toHaveCount(1);
   }
+  await expect(page.locator('#subtab-AdminMollieSubscriptionFAQParent')).toHaveCount(0);
 });

@@ -53,7 +53,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d24892cee2206a282f2da551
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_81c97809c908ee9375f3e00fca33ef83'] = 'IMPORTANTS';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_3e069600ef900b2e98f23b727cd100cf'] = 'Lorsque vous ajoutez des attributs d\'abonnement Mollie, assurez-vous d\'inclure toujours \'aucune\' comme solution de secours.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_c13d080743619c08b7490506b659d621'] = 'POINTS IMPORTANTS sur le transporteur d’abonnement';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_eb0b4ddca36b363a427bf335c5c3550f'] = 'Assurez-vous de sélectionner le transporteur par défaut pour les commandes récurrentes dans les paramètres avancés.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_d46802ca8f2785211e7bd5c2cb0660be'] = 'Assurez-vous de sélectionner le transporteur par défaut pour les commandes récurrentes dans “Options d’abonnement”, en haut de cette page.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_b9aefba8e2f89d7bffc685b64aa0d736'] = 'Le transporteur doit couvrir toutes les régions prises en charge par la boutique.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_4c47d0a7f71225d19b24b78aac64902f'] = 'Le transporteur ne peut pas être modifié après la première commande d’abonnement.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_0f6a3974ead9594357aab192664a7eb5'] = 'Les paramètres de tarification/poids du transporteur sélectionné ou la sélection du transporteur dans Mollie ne doivent pas changer. Si c’est le cas, les commandes d’abonnement doivent être annulées et le transporteur re-sélectionné dans les paramètres du module.';
@@ -64,7 +64,7 @@ $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_f5f883e559bd9ec0885fc639
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_ca1e79f242bd752219bcd277c81388c1'] = 'Création de commande récurrente';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8d94b7e95d45f3794e5954d07096d1e6'] = 'Mollie pour Prestashop crée automatiquement une nouvelle commande lorsque la commande précédente est payée.';
 $_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_fefdd14033551369993a8f0f381844b4'] = 'Les commandes récurrentes utilisent toujours le prix du produit qui a été spécifié lors de la création de l\'abonnement associé.';
-$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'La commande récurrente remplacera le paramètre de paiement \"Méthode\" et utilisera l\'API de paiement de Mollie.';
+$_MODULE['<{mollie}prestashop>subscriptionfaqcontroller_8fd39e0e481c4f296e74f28779c7aee1'] = 'La commande récurrente remplacera le paramètre de paiement “Méthode” et utilisera l\'API de paiement de Mollie.';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_4ca2c509994c2776d0880357b4e8e5be'] = 'Abonnements';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_b718adec73e04ce3ec720dd11a06a308'] = 'ID';
 $_MODULE['<{mollie}prestashop>subscriptiongriddefinitionfactory_9bf79c7f10eadd0b612b8c354ad19bdc'] = 'ID de l\'abonnement';
