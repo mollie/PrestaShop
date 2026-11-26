@@ -38,6 +38,9 @@
               <i class="material-icons">replay</i> {l s='Initiate Refund' mod='mollie'}
             </button>
           </div>
+          {if $payment_status == 'authorized' && $refundable_amount <= 0}
+            <p class="help-block mt-1">{l s='Refund is available after the payment has been captured.' mod='mollie'}</p>
+          {/if}
         </div>
       </div>
       <div class="col-md-6">

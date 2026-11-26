@@ -718,6 +718,7 @@ $_MODULE['<{mollie}prestashop>return_df0a9d9ea4e1dc6edd2b9a10607daa4c'] = 'Plata
 $_MODULE['<{mollie}prestashop>return_b4199bc53810851932428ef00f9042b1'] = 'Nu aveți permisiunea de a vedea această pagină.';
 $_MODULE['<{mollie}prestashop>order_info_ea9cf7e47ff33b2be14e6dd07cbcefc6'] = 'Expediere';
 $_MODULE['<{mollie}prestashop>order_info_deb1f82e928b7555f4630a0f358cdfcb'] = 'Rambursarea este disponibilă după ce comanda a fost expediată (integral sau parțial).';
+$_MODULE['<{mollie}prestashop>order_info_2e44c77892be130d9a1552039e4e38a5'] = 'Rambursarea este disponibilă după ce plata a fost capturată.';
 $_MODULE['<{mollie}prestashop>modal_refund_ee095b00f8c055edf94c8d723aa390c1'] = 'Cantitate de rambursat';
 $_MODULE['<{mollie}prestashop>modal_ship_03a1c16d4054ebcf6ff88e19a612ae80'] = 'Cantitate de expediat';
 $_MODULE['<{mollie}prestashop>modal_cancel_292f3463c1b27f10ce0cca5122e3d732'] = 'Cantitate de anulat';

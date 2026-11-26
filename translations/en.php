@@ -445,6 +445,7 @@ $_MODULE['<{mollie}prestashop>order_info_bcd372e1d75ca10ce207ef3ef14379d1'] = 'N
 $_MODULE['<{mollie}prestashop>order_info_81f04888e2363d334eeee1d13885509d'] = 'Refund amount (Max: %s)';
 $_MODULE['<{mollie}prestashop>order_info_88b6563ca5cac4845361c28959c5612e'] = 'Initiate Refund';
 $_MODULE['<{mollie}prestashop>order_info_0ac0d516e0134227932ef94d40b4d75e'] = 'Capture amount (Capturable: %s)';
+$_MODULE['<{mollie}prestashop>order_info_2e44c77892be130d9a1552039e4e38a5'] = 'Refund is available after the payment has been captured.';
 $_MODULE['<{mollie}prestashop>order_info_8cc5c0aa55f87d3359cae99c5b883f0e'] = 'Initiate Capture';
 $_MODULE['<{mollie}prestashop>order_info_deb10517653c255364175796ace3553f'] = 'Product';
 $_MODULE['<{mollie}prestashop>order_info_3601146c4e948c32b6424d2c0a7f0118'] = 'Price';

@@ -13,8 +13,10 @@
 namespace Mollie\Service;
 
 use Mollie;
+use Mollie\Api\Types\PaymentStatus;
 use Mollie\Exception\MollieException;
 use Mollie\Utility\NumberUtility;
+use Mollie\Utility\RefundUtility;
 use Mollie\Utility\TransactionUtility;
 
 if (!defined('_PS_VERSION_')) {
@@ -50,6 +52,14 @@ class MollieOrderService
 
         if (isset($mollieOrder->amountRemaining)) {
             return (float) $mollieOrder->amountRemaining->value;
+        }
+
+        // Mollie can leave out amountRemaining on an authorized payment, and only the captured part can be refunded
+        if ($mollieOrder->status === PaymentStatus::STATUS_AUTHORIZED) {
+            $captured = isset($mollieOrder->amountCaptured) ? (float) $mollieOrder->amountCaptured->value : 0.0;
+            $refunded = isset($mollieOrder->amountRefunded) ? (float) $mollieOrder->amountRefunded->value : 0.0;
+
+            return max(0.0, RefundUtility::getRefundableAmount($captured, $refunded));
         }
 
         if (isset($mollieOrder->amount)) {
