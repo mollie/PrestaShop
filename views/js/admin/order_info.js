@@ -26,9 +26,13 @@ $(document).ready(function () {
     }
   }
 
+  function capturableAmount() {
+    return parseFloat($('#mollie-capture-amount').attr('max'));
+  }
+
   // A partial card capture is final at Mollie: the uncaptured rest of the authorization is released.
   function captureConfirmMessage(amount) {
-    var capturableCents = Math.round(parseFloat($('#mollie-capture-amount').attr('max')) * 100);
+    var capturableCents = Math.round(capturableAmount() * 100);
     var amountCents = Math.round(parseFloat(amount) * 100);
 
     if (isNaN(capturableCents) || isNaN(amountCents) || amountCents >= capturableCents) {
@@ -199,7 +203,7 @@ $(document).ready(function () {
 
   $('#mollie-initiate-capture').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0 || parseFloat(amount) > parseFloat($('#mollie-capture-amount').attr('max'))) {
+    if (!amount || amount <= 0 || parseFloat(amount) > capturableAmount()) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
@@ -212,7 +216,7 @@ $(document).ready(function () {
 
   $('#mollie-capture-all').on('click', function() {
     var amount = $('#mollie-capture-amount').val();
-    if (!amount || amount <= 0 || parseFloat(amount) > parseFloat($('#mollie-capture-amount').attr('max'))) {
+    if (!amount || amount <= 0 || parseFloat(amount) > capturableAmount()) {
       showErrorMessage(trans.validCaptureAmountRequired);
       return;
     }
