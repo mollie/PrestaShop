@@ -938,8 +938,9 @@ class Mollie extends PaymentModule
                 $molOrderPaymentFeeRepository = $this->getService(MolOrderPaymentFeeRepositoryInterface::class);
                 /** @var MolOrderPaymentFee|null $molOrderPaymentFee */
                 $molOrderPaymentFee = $molOrderPaymentFeeRepository->findOneBy(['id_order' => (int) $order->id]);
-                if ($molOrderPaymentFee && 0.0 !== round((float) $molOrderPaymentFee->fee_tax_incl, 2)) {
-                    $paymentFee = number_format((float) $molOrderPaymentFee->fee_tax_incl, 2, '.', '');
+                $feeTaxIncl = $molOrderPaymentFee ? round((float) $molOrderPaymentFee->fee_tax_incl, 2) : 0.0;
+                if (0.0 !== $feeTaxIncl) {
+                    $paymentFee = number_format($feeTaxIncl, 2, '.', '');
                 }
             }
 
