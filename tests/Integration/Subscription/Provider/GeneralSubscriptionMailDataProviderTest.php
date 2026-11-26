@@ -12,6 +12,7 @@
 
 namespace Mollie\Tests\Integration\Subscription\Provider;
 
+use Mollie\Adapter\Context;
 use Mollie\Exception\Code\ExceptionCode;
 use Mollie\Shared\Infrastructure\Exception\MollieDatabaseException;
 use Mollie\Subscription\Provider\GeneralSubscriptionMailDataProvider;
@@ -52,21 +53,30 @@ class GeneralSubscriptionMailDataProviderTest extends BaseTestCase
 
         $result = $generalSubscriptionMailDataProvider->run((int) $recurringOrder->id);
 
-        $expectedProductUnitPriceTaxExcl = (string) NumberUtility::toPrecision(
-            (float) $recurringOrderProduct->unit_price,
-            NumberUtility::DECIMAL_PRECISION
+        /** @var Context $context */
+        $context = $this->getService(Context::class);
+
+        $expectedProductUnitPriceTaxExcl = $context->formatPrice(
+            NumberUtility::toPrecision(
+                (float) $recurringOrderProduct->unit_price,
+                NumberUtility::DECIMAL_PRECISION
+            ),
+            (string) $currency->iso_code
         );
 
-        $expectedTotalPriceTaxIncl = (string) NumberUtility::toPrecision(
-            (float) $recurringOrder->total_tax_incl,
-            NumberUtility::DECIMAL_PRECISION
+        $expectedTotalPriceTaxIncl = $context->formatPrice(
+            NumberUtility::toPrecision(
+                (float) $recurringOrder->total_tax_incl,
+                NumberUtility::DECIMAL_PRECISION
+            ),
+            (string) $currency->iso_code
         );
 
         $this->assertEquals((string) $recurringOrder->mollie_subscription_id, $result->getMollieSubscriptionId());
         $this->assertEquals((string) $product->name, $result->getProductName());
-        $this->assertEquals($expectedProductUnitPriceTaxExcl, $result->getProductUnitPriceTaxExcl());
+        $this->assertSame($expectedProductUnitPriceTaxExcl, $result->getProductUnitPriceTaxExcl());
         $this->assertEquals((int) $recurringOrderProduct->quantity, $result->getProductQuantity());
-        $this->assertEquals($expectedTotalPriceTaxIncl, $result->getTotalOrderPriceTaxIncl());
+        $this->assertSame($expectedTotalPriceTaxIncl, $result->getTotalOrderPriceTaxIncl());
         $this->assertEquals((string) $customer->firstname, $result->getFirstName());
         $this->assertEquals((string) $customer->lastname, $result->getLastName());
         $this->assertEquals((int) $customer->id_lang, $result->getLangId());
