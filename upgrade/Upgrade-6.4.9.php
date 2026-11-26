@@ -21,7 +21,6 @@ if (!defined('_PS_VERSION_')) {
  */
 function upgrade_module_6_4_9($module)
 {
-    // The subscription FAQ now lives on the Subscriptions tab, so its own tabs are removed.
     try {
         foreach (['AdminMollieSubscriptionFAQ', 'AdminMollieSubscriptionFAQParent'] as $className) {
             $idTab = (int) Tab::getIdFromClassName($className);
