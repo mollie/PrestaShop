@@ -702,3 +702,5 @@ $_MODULE['<{mollie}prestashop>mollie_643562a9ae7099c8aabfdc93478db117'] = 'Zprac
 $_MODULE['<{mollie}prestashop>payment_history_1571756d5a655fafc2ece57e3f28a54e'] = '%s událostí';
 $_MODULE['<{mollie}prestashop>mollie_76f0ed934de85cc7131910b32ede7714'] = 'Vrácení peněz';
 $_MODULE['<{mollie}prestashop>payment_history_0a8bd13aeb647d6e626d5e6090bf199a'] = '1 událost';
+$_MODULE['<{mollie}prestashop>mollie_38e60c560dbb888e0e995122e2b5788e'] = 'Opravdu chcete inkasovat %1$s z %2$s?';
+$_MODULE['<{mollie}prestashop>mollie_810bab9c5a86134d2d08201cb4cea287'] = 'Opravdu chcete inkasovat %1$s z %2$s? Zbývajících %3$s bude uvolněno a již je nelze inkasovat.';

@@ -702,3 +702,5 @@ $_MODULE['<{mollie}prestashop>mollie_643562a9ae7099c8aabfdc93478db117'] = 'In Be
 $_MODULE['<{mollie}prestashop>payment_history_1571756d5a655fafc2ece57e3f28a54e'] = '%s Ereignisse';
 $_MODULE['<{mollie}prestashop>mollie_76f0ed934de85cc7131910b32ede7714'] = 'Rückerstattung';
 $_MODULE['<{mollie}prestashop>payment_history_0a8bd13aeb647d6e626d5e6090bf199a'] = '1 Ereignis';
+$_MODULE['<{mollie}prestashop>mollie_38e60c560dbb888e0e995122e2b5788e'] = 'Sind Sie sicher, dass Sie %1$s von %2$s erfassen möchten?';
+$_MODULE['<{mollie}prestashop>mollie_810bab9c5a86134d2d08201cb4cea287'] = 'Sind Sie sicher, dass Sie %1$s von %2$s erfassen möchten? Die restlichen %3$s werden freigegeben und können nicht mehr erfasst werden.';
