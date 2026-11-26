@@ -14,10 +14,6 @@ namespace Translations;
 
 use PHPUnit\Framework\TestCase;
 
-/**
- * The Payments API rows on the order page show the payment fee with the label the invoice
- * and the order confirmation page already translate, so every catalog needs the order_info key too.
- */
 class OrderPanelPaymentFeeTranslationsTest extends TestCase
 {
     public function testOrderPanelTemplateShowsThePaymentFeeRow()
@@ -48,6 +44,7 @@ class OrderPanelPaymentFeeTranslationsTest extends TestCase
             $_MODULE = [];
             include $catalog;
 
+            $this->assertArrayHasKey($invoiceKey, $_MODULE, sprintf('Missing invoice "Payment fee" in %s.php', $iso));
             $this->assertArrayHasKey($panelKey, $_MODULE, sprintf('Missing order panel "Payment fee" in %s.php', $iso));
             $this->assertSame($_MODULE[$invoiceKey], $_MODULE[$panelKey], sprintf('Order panel "Payment fee" differs from the invoice in %s.php', $iso));
         }

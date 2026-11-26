@@ -122,7 +122,7 @@
               {/foreach}
               {if $payment_fee}
                 <tr>
-                  <td><strong>{l s='Payment fee' mod='mollie'}</strong></td>
+                  <td><strong>{if $payment_fee < 0}{l s='Discount' mod='mollie'}{else}{l s='Payment fee' mod='mollie'}{/if}</strong></td>
                   <td>{$payment_fee|escape:'html':'UTF-8'}</td>
                 </tr>
               {/if}
