@@ -90,7 +90,7 @@ class GeneralSubscriptionMailDataProvider
         ]);
 
         // TODO would be great to get unitPriceTaxIncl
-        $unitPriceTaxExcl = (float) $this->context->formatPrice(
+        $unitPriceTaxExcl = $this->context->formatPrice(
             NumberUtility::toPrecision(
                 (float) $recurringOrderProduct->unit_price,
                 NumberUtility::DECIMAL_PRECISION
@@ -98,7 +98,7 @@ class GeneralSubscriptionMailDataProvider
             (string) $currency->iso_code
         );
 
-        $totalPriceTaxIncl = (float) $this->context->formatPrice(
+        $totalPriceTaxIncl = $this->context->formatPrice(
             NumberUtility::toPrecision(
                 (float) $recurringOrder->total_tax_incl,
                 NumberUtility::DECIMAL_PRECISION

@@ -22,11 +22,11 @@ class GeneralSubscriptionMailData
     private $mollieSubscriptionId;
     /** @var string */
     private $productName;
-    /** @var float */
+    /** @var string */
     private $productUnitPriceTaxExcl;
     /** @var int */
     private $productQuantity;
-    /** @var float */
+    /** @var string */
     private $totalOrderPriceTaxIncl;
     /** @var string */
     private $firstName;
@@ -42,9 +42,9 @@ class GeneralSubscriptionMailData
     public function __construct(
         string $mollieSubscriptionId,
         string $productName,
-        float $productUnitPriceTaxExcl,
+        string $productUnitPriceTaxExcl,
         int $productQuantity,
-        float $totalOrderPriceTaxIncl,
+        string $totalOrderPriceTaxIncl,
         string $firstName,
         string $lastName,
         string $customerEmail,
@@ -80,9 +80,9 @@ class GeneralSubscriptionMailData
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getProductUnitPriceTaxExcl(): float
+    public function getProductUnitPriceTaxExcl(): string
     {
         return $this->productUnitPriceTaxExcl;
     }
@@ -96,9 +96,9 @@ class GeneralSubscriptionMailData
     }
 
     /**
-     * @return float
+     * @return string
      */
-    public function getTotalOrderPriceTaxIncl(): float
+    public function getTotalOrderPriceTaxIncl(): string
     {
         return $this->totalOrderPriceTaxIncl;
     }
@@ -159,9 +159,9 @@ class GeneralSubscriptionMailData
     public static function create(
         string $mollieSubscriptionId,
         string $productName,
-        float $productUnitPriceTaxExcl,
+        string $productUnitPriceTaxExcl,
         int $productQuantity,
-        float $totalOrderPriceTaxIncl,
+        string $totalOrderPriceTaxIncl,
         string $firstName,
         string $lastName,
         string $customerEmail,

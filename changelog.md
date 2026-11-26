@@ -2,6 +2,9 @@
 
 # Changelog #
 
+## Changes in release 6.4.9
++ Fixed subscription emails (payment failed, subscription cancelled, carrier updated) showing the product and total price as 0 or cut off, for example €1 instead of €1.234,56
+
 ## Changes in release 6.4.8
 + Fixed the back office Orders page crashing when the shop has a Mollie order from 2023 with a dot in its reference, for example ord_1.zih1s5
 + Fixed a duplicate Apple Pay Direct element on product pages, which left an empty gap below the product buttons
