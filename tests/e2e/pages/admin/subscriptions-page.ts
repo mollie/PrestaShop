@@ -10,12 +10,6 @@ export class SubscriptionsPage {
     await this.page.locator('#invertus_mollie_subscription_grid_panel').waitFor({ timeout: 20_000 });
   }
 
-  async gotoFAQ() {
-    await this.page.goto('/admin1/index.php?controller=AdminMollieSubscriptionOrders');
-    await dismissInvalidTokenWall(this.page);
-    await this.page.locator('#mollie-subscription-faq').waitFor({ timeout: 20_000 });
-  }
-
   async selectCarrierAndSave(optionIndex: number) {
     await this.page.locator('#form_carrier').selectOption({ index: optionIndex });
     await this.page.getByText('Save').click();

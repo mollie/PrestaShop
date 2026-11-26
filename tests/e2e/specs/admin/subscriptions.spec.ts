@@ -10,7 +10,8 @@ test('subscriptions grid renders', async ({ page }) => {
 
 test('subscriptions FAQ card is collapsed and expands', async ({ page }) => {
   const subs = new SubscriptionsPage(page);
-  await subs.gotoFAQ();
+  await subs.gotoOrders();
+  await expect(page.locator('#mollie-subscription-faq')).toBeVisible();
   await expect(page.locator('#mollie-subscription-faq-body')).toBeHidden();
   await page.locator('#mollie-subscription-faq .card-header').click();
   await expect(page.getByText('Subscription creation').first()).toBeVisible();
